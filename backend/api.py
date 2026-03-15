@@ -10,12 +10,14 @@ import pandas as pd
 from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from joblib import load
 from pydantic import BaseModel
 from datetime import datetime
 
 BASE_DIR = Path(__file__).resolve().parent.parent  # THE-LAG root
 BACKEND_DIR = BASE_DIR / "backend"
+FRONTEND_DIR = BASE_DIR / "frontend"
 
 MODEL_XGB_PATH = BACKEND_DIR / "model_xgb.joblib"
 MODEL_MLP_PATH = BACKEND_DIR / "model_mlp.joblib"
@@ -106,6 +108,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Serve frontend static files
+if FRONTEND_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
+
+@app.get("/")
+def root():
+    index_path = FRONTEND_DIR / "index.html"
+    if index_path.exists():
+        return FileResponse(str(index_path))
+    return {"status": "ok", "message": "THE-LAG API is running."}
 
 
 @app.on_event("startup")
