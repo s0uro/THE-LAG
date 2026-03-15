@@ -1,0 +1,40 @@
+"gid" page ID of the text
+"sid" sentence ID of the text
+"lid" line ID of the text
+"tid" token ID of the text
+"token" string of the word-token
+"lemma" string of the word-lemma
+"orthoSyllables" hyphenized word-token
+"orthoSyllablesCount" number of syllables in the word-token
+"POS" part of speech of the word-token
+"len" length of the word-token (chars)
+"freq" corpus-based raw frequency of the word-token
+"idDevice" ID of the tracking device (ET vs FT)
+"idSession" ID of the single session (one per reading type (aloud vs silent) and tracking device (ET vs FT)
+"idUser"  ID of the participant (up to 4 sessions for each user)
+"idDoc" ID of the text
+"readingType" aloud vs silent
+"Age"
+"Sex"
+"Education Level"
+"Handedness"
+"Origin"
+"WAIS Arithmetic"
+"WAIS Coding"
+"WAIS Digit Span Ascending"
+"WAIS Digit Span Forward" 
+"WAIS Digit Span Reverse"
+"WAIS Digit Span Total"
+"WAIS Symbol Search"
+"WAIS Vocabulary"
+"gidCoverage" percentage of the word in the page being tracked\fixated
+"FFD" first fixation duration (ET only)
+"FPD" first pass duration (ET only)
+"TRT" total reading time (ET only)
+"RPD" regression path duration (ET only)
+"fixNum" number of fixations landing on the word-token (ET only)
+"isFix" weather the word-token was fixated or not (ET only)
+"isReg" weather a regression is started after the word-token (ET only)
+"reFix" weather the word-token was fixated more than once (ET only)
+"dt" finger-tracking time (FT only)
+"coverage" percentage of the word-token being finger tracked (FT only)

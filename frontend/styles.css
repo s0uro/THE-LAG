@@ -1,0 +1,926 @@
+/* Προαιρετικά custom styles πάνω από Tailwind */
+
+/* Cyber grid background – from Uiverse.io by sunn_2633 (προσαρμοσμένο) */
+.cyber-pattern {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #050505;
+
+  background-image:
+    radial-gradient(circle at center, transparent 30%, #000 90%),
+    linear-gradient(rgba(3, 233, 244, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(3, 233, 244, 0.12) 1px, transparent 1px),
+    linear-gradient(rgba(217, 3, 244, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(217, 3, 244, 0.06) 1px, transparent 1px);
+
+  background-size:
+    100% 100%,
+    60px 60px,
+    60px 60px,
+    20px 20px,
+    20px 20px;
+
+  animation: cyber-move 10s linear infinite;
+}
+
+@keyframes cyber-move {
+  0% {
+    background-position:
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      0 0;
+  }
+  100% {
+    background-position:
+      0 0,
+      60px 60px,
+      60px 60px,
+      40px 40px,
+      40px 40px;
+  }
+}
+
+/* Top-right Log in / Sign up – 3D buttons, visible only when title is on screen */
+.auth-header {
+  position: fixed;
+  top: 5vh;
+  right: 2rem;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  opacity: 1;
+  transition: opacity 0.4s ease-out, filter 0.4s ease-out;
+}
+
+.auth-header.scrolled {
+  opacity: 0;
+  pointer-events: none;
+  filter: blur(4px);
+}
+
+.auth-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.header-logout-wrap {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  gap: 0.75rem;
+}
+
+/* Welcome username – top-right next to Log out */
+.header-welcome {
+  font-family: "Montserrat", system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  white-space: nowrap;
+}
+
+.header-welcome #header-welcome-name {
+  color: #38bdf8;
+}
+
+/* Auth buttons – neumorphic (Uiverse.io adamgiebl), transparent background, click effect */
+.auth-neumorphic-btn {
+  color: #e2e8f0;
+  padding: 0.6em 1.2em;
+  font-size: 0.8rem;
+  font-family: "Montserrat", system-ui, sans-serif;
+  font-weight: 600;
+  border-radius: 0.5em;
+  background: transparent;
+  cursor: pointer;
+  border: 1px solid rgba(226, 232, 240, 0.25);
+  transition: all 0.3s;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.4), -4px -4px 8px rgba(255, 255, 255, 0.03);
+}
+
+.auth-neumorphic-btn:hover {
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.auth-neumorphic-btn:active {
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5), -2px -2px 6px rgba(255, 255, 255, 0.02);
+}
+
+/* Sign up modal – overlay + form (from Uiverse.io by ammarsaa, colors matched to site) */
+.signup-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.signup-modal.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.signup-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 5, 5, 0.85);
+  backdrop-filter: blur(6px);
+}
+
+.signup-modal-box {
+  position: relative;
+  max-width: 100%;
+}
+
+.signup-modal-close {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  z-index: 1;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #94a3b8;
+  background: #0f172a;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.signup-modal-close:hover {
+  color: #e2e8f0;
+  background: #1e293b;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+/* Log in modal – same structure as signup */
+.login-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.login-modal.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.login-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 5, 5, 0.85);
+  backdrop-filter: blur(6px);
+}
+
+.login-modal-box {
+  position: relative;
+  max-width: 100%;
+}
+
+.login-modal-close {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  z-index: 1;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #94a3b8;
+  background: #0f172a;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.login-modal-close:hover {
+  color: #e2e8f0;
+  background: #1e293b;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+/* Register + Log in forms – same look (dark cyber/slate + cyan) */
+.signup-form.form,
+.login-form.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 350px;
+  padding: 24px;
+  border-radius: 16px;
+  position: relative;
+  background: linear-gradient(165deg, #0f172a 0%, #020617 100%);
+  color: #e2e8f0;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  box-shadow:
+    0 0 0 1px rgba(3, 233, 244, 0.06),
+    0 25px 50px -12px rgba(0, 0, 0, 0.6),
+    0 0 40px -10px rgba(56, 189, 248, 0.12);
+  font-family: "Montserrat", system-ui, sans-serif;
+}
+
+.signup-form .title,
+.login-form .title {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 30px;
+  color: #38bdf8;
+  text-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+}
+
+.signup-form .title::before,
+.signup-form .title::after,
+.login-form .title::before,
+.login-form .title::after {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  left: 0;
+  background-color: #38bdf8;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+}
+
+.signup-form .title::after,
+.login-form .title::after {
+  animation: signup-pulse 1s linear infinite;
+}
+
+@keyframes signup-pulse {
+  from {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+.signup-form .message,
+.signup-form .signin,
+.login-form .message,
+.login-form .signin {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.signup-form .signin,
+.login-form .signin {
+  text-align: center;
+}
+
+.signup-form .signin a,
+.login-form .signin a {
+  color: #38bdf8;
+}
+
+.signup-form .signin a:hover,
+.login-form .signin a:hover {
+  color: #7dd3fc;
+  text-decoration: underline;
+}
+
+.signup-status,
+.login-status {
+  font-size: 13px;
+  color: #38bdf8;
+  text-align: center;
+  margin: 4px 0 0;
+  min-height: 1.2em;
+}
+
+.login-status.error {
+  color: #f87171;
+}
+
+.signup-form .flex {
+  display: flex;
+  width: 100%;
+  gap: 8px;
+}
+
+.signup-form label,
+.login-form label {
+  position: relative;
+}
+
+.signup-form .input,
+.login-form .input {
+  background-color: #0f172a;
+  color: #e2e8f0;
+  width: 100%;
+  padding: 20px 10px 5px 12px;
+  outline: 0;
+  border: 1px solid rgba(71, 85, 105, 0.5);
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  text-align: center;
+}
+
+.signup-form .input:focus,
+.login-form .input:focus {
+  border-color: rgba(56, 189, 248, 0.5);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+}
+
+.signup-form label .input + span,
+.login-form label .input + span {
+  color: #64748b;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.9em;
+  cursor: text;
+  transition: 0.3s ease;
+  pointer-events: none;
+}
+
+.signup-form label .input:placeholder-shown + span,
+.login-form label .input:placeholder-shown + span {
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.9em;
+}
+
+.signup-form label .input:focus + span,
+.signup-form label .input:valid + span,
+.login-form label .input:focus + span,
+.login-form label .input:valid + span {
+  color: #38bdf8;
+  top: 0;
+  transform: translateX(-50%);
+  font-size: 0.7em;
+  font-weight: 600;
+}
+
+/* First name / Last name – left-aligned like before */
+.signup-form .flex .input {
+  text-align: left;
+}
+.signup-form .flex label .input + span {
+  left: 12px;
+  top: 0;
+  transform: none;
+}
+.signup-form .flex label .input:placeholder-shown + span {
+  top: 12.5px;
+  transform: none;
+}
+.signup-form .flex label .input:focus + span,
+.signup-form .flex label .input:valid + span {
+  transform: none;
+  left: 12px;
+}
+
+.signup-form .submit,
+.login-form .submit {
+  border: none;
+  outline: none;
+  padding: 12px 16px;
+  border-radius: 10px;
+  color: #0f172a;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Montserrat", system-ui, sans-serif;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.95) 0%, rgba(14, 165, 233, 0.95) 100%);
+  border-bottom: 2px solid rgba(2, 132, 199, 0.8);
+  box-shadow: 0 4px 0 rgba(12, 74, 110, 0.8), 0 6px 20px rgba(56, 189, 248, 0.2);
+}
+
+.signup-form .submit:hover,
+.login-form .submit:hover {
+  background: linear-gradient(180deg, rgba(56, 189, 248, 1) 0%, rgba(14, 165, 233, 1) 100%);
+  box-shadow: 0 5px 0 rgba(12, 74, 110, 0.8), 0 8px 24px rgba(56, 189, 248, 0.25);
+  transform: translateY(-1px);
+}
+
+.signup-form .submit:active,
+.login-form .submit:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 0 rgba(12, 74, 110, 0.8), 0 4px 12px rgba(56, 189, 248, 0.15);
+}
+
+/* Agreement checkbox – site colours */
+.signup-form .checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  margin: 4px 0;
+}
+
+.signup-form .checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: #38bdf8;
+  cursor: pointer;
+}
+
+.signup-form .checkbox-text {
+  font-size: 13px;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+.signup-form .checkbox-text a {
+  color: #38bdf8;
+}
+
+.signup-form .checkbox-text a:hover {
+  color: #7dd3fc;
+  text-decoration: underline;
+}
+
+/* Unlock notice – shown when user scrolls past hero */
+.unlock-notice {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 1rem;
+  background: rgba(15, 23, 42, 0.97);
+  border-bottom: 1px solid rgba(56, 189, 248, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: transform 0.35s ease-out, opacity 0.35s ease-out;
+  pointer-events: none;
+}
+
+.unlock-notice.visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.unlock-notice-text {
+  margin: 0;
+  font-family: "Montserrat", system-ui, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #e2e8f0;
+}
+
+.unlock-notice-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.unlock-notice-btn {
+  font-family: "Montserrat", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 0.45rem 1rem;
+  border-radius: 0.375rem;
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  background: rgba(56, 189, 248, 0.2);
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.unlock-notice-btn:hover {
+  background: rgba(56, 189, 248, 0.35);
+  border-color: rgba(56, 189, 248, 0.7);
+}
+
+.unlock-notice-dismiss {
+  width: 1.75rem;
+  height: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: #94a3b8;
+  background: transparent;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+}
+
+.unlock-notice-dismiss:hover {
+  color: #fff;
+  background: rgba(51, 65, 85, 0.6);
+}
+
+/* Word-by-word fade-in title: WELCOME TO THE LAG PROJECT */
+.hero-fullscreen {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+/* Fade out title + sentence + scroll button when scrolling down */
+.hero-fullscreen .hero-title-wrap,
+.hero-fullscreen .word-wrap,
+.hero-fullscreen .scroll-down {
+  transition:
+    opacity 550ms ease-out,
+    transform 550ms ease-out,
+    filter 550ms ease-out;
+  will-change: opacity, transform, filter;
+}
+
+/* Hide sentence until title has disappeared – no overlap */
+.hero-fullscreen .word-wrap {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hero-section.scrolled .hero-title-wrap {
+  opacity: 0.35;
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+.hero-section.scrolled .hero-title-wrap {
+  transform: translate(-50%, -50%) translateY(-8px) scale(0.99);
+}
+
+/* When title is fully gone, hide it and pop up the sentence */
+.hero-section.title-gone .hero-title-wrap {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hero-section.scrolled .word-wrap,
+.hero-section.scrolled .scroll-down {
+  opacity: 0;
+  transform: translateY(16px) scale(0.88);
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+/* When title is gone: show sentence in the center, same style as title */
+.hero-section.title-gone .word-wrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 72rem;
+  margin-top: 0;
+  opacity: 1;
+  filter: blur(0);
+  pointer-events: auto;
+  transition: opacity 550ms ease-out, transform 550ms ease-out, filter 550ms ease-out;
+}
+
+/* First scroll: sentence starts fading (same as title .scrolled) */
+.hero-section.sentence-scrolled .word-wrap {
+  opacity: 0.35;
+  transform: translate(-50%, -50%) translateY(-8px) scale(0.99);
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+/* Second scroll: sentence fully gone (same as title .title-gone) */
+.hero-section.sentence-gone .word-wrap {
+  opacity: 0;
+  transform: translate(-50%, -50%) translateY(-12px) scale(0.98);
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+/* Pop-out CTA when sentence is gone: "Upload your text and get your results" */
+.upload-cta-wrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 36rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  filter: blur(6px);
+  transform: translate(-50%, -50%) scale(0.92);
+  transition: none;
+}
+.hero-section.sentence-gone .upload-cta-wrap {
+  pointer-events: auto;
+  opacity: 0;
+  filter: blur(4px);
+  transform: translate(-50%, -50%) scale(0.94);
+  animation: upload-cta-pop 1.2s 0.15s forwards cubic-bezier(0.5, 1, 0.89, 1);
+}
+@keyframes upload-cta-pop {
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+.upload-cta-text {
+  font-family: "Montserrat", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+  color: #e2e8f0;
+  margin: 0;
+  text-shadow:
+    0 0 20px rgba(56, 189, 248, 0.2),
+    0 0 40px rgba(56, 189, 248, 0.1),
+    1px 1px 0 rgba(15, 23, 42, 0.8),
+    2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* From Uiverse.io by omar49511 – upload button under CTA text */
+.container-btn-file {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  background-color: #307750;
+  color: #fff;
+  border-style: none;
+  padding: 1em 2em;
+  border-radius: 0.5em;
+  overflow: hidden;
+  z-index: 1;
+  box-shadow: 4px 8px 10px -3px rgba(0, 0, 0, 0.356);
+  transition: all 250ms;
+  cursor: pointer;
+  font-family: "Montserrat", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+}
+.container-btn-file input[type="file"] {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.container-btn-file > svg {
+  margin-right: 0.5em;
+}
+.container-btn-file::before {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: 0;
+  border-radius: 0.5em;
+  background-color: #469b61;
+  z-index: -1;
+  transition: all 350ms;
+}
+.container-btn-file:hover::before {
+  width: 100%;
+}
+
+.hero-selected-filename {
+  font-family: "Montserrat", system-ui, sans-serif;
+  font-size: 0.875rem;
+  color: #94a3b8;
+  min-height: 1.25rem;
+}
+.hero-selected-filename:not(:empty)::before {
+  content: "Selected: ";
+  color: #64748b;
+}
+.selected-filename:not(:empty)::before {
+  content: "Selected: ";
+  color: #64748b;
+}
+
+.hero-pipeline-status {
+  font-family: "Montserrat", system-ui, sans-serif;
+  min-height: 1.5rem;
+}
+
+/* From Uiverse.io by AlimurtuzaCodes – Generate button (permission to start generation) */
+.generate-btn {
+  border: none;
+  width: 15em;
+  height: 3.25em;
+  border-radius: 3em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  background: #1c1a1c;
+  cursor: pointer;
+  transition: all 450ms ease-in-out;
+  font-family: "Montserrat", system-ui, sans-serif;
+}
+.generate-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.generate-btn .sparkle {
+  fill: #94a3b8;
+  transition: all 800ms ease;
+}
+.generate-btn .text {
+  font-weight: 600;
+  color: #94a3b8;
+  font-size: 1rem;
+}
+.generate-btn:not(:disabled):hover {
+  background: linear-gradient(0deg, #38bdf8, #0ea5e9);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.25),
+    inset 0 -4px 0 0 rgba(0, 0, 0, 0.2),
+    0 0 0 4px rgba(56, 189, 248, 0.2),
+    0 0 24px rgba(56, 189, 248, 0.4);
+  transform: translateY(-2px);
+}
+.generate-btn:not(:disabled):hover .text {
+  color: #fff;
+}
+.generate-btn:not(:disabled):hover .sparkle {
+  fill: #fff;
+  transform: scale(1.2);
+}
+
+.hero-section.title-gone .word-wrap .word {
+  opacity: 0;
+  filter: blur(4px);
+  transform: scale(0.94);
+  animation: sentence-reveal 1.8s 0.2s forwards cubic-bezier(0.5, 1, 0.89, 1);
+}
+
+@keyframes sentence-reveal {
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+}
+
+.hero-section.title-gone .scroll-down {
+  opacity: 0.9;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  pointer-events: auto;
+}
+
+.hero-title-wrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+/* Title: 3D layered shadow (centered in hero) */
+.hero-title-wrap .text {
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  transform: translate(50%, -50%);
+  text-transform: uppercase;
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: clamp(2rem, 7vw, 5em);
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  max-width: 95vw;
+  width: max-content;
+  color: #f5f5f5;
+  text-shadow:
+    1px 1px 1px #919191,
+    1px 2px 1px #919191,
+    1px 3px 1px #919191,
+    1px 4px 1px #919191,
+    1px 5px 1px #919191,
+    1px 6px 1px #919191,
+    1px 7px 1px #919191,
+    1px 8px 1px #919191,
+    1px 9px 1px #919191,
+    1px 10px 1px #919191,
+    1px 18px 6px rgba(16, 16, 16, 0.4),
+    1px 22px 10px rgba(16, 16, 16, 0.2),
+    1px 25px 35px rgba(16, 16, 16, 0.2),
+    1px 30px 60px rgba(16, 16, 16, 0.4);
+}
+
+/* Rotating reason-of-project line (word-flick) */
+.word-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 72rem;
+  min-height: 20.5em;
+  margin-top: 150px;
+  margin-bottom: 0.5rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.word {
+  color: #fff;
+  font-family: "Montserrat", Tahoma, sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.1rem, 2.5vw, 2.5em);
+  text-align: center;
+  line-height: 1.4;
+  overflow-wrap: break-word;
+  word-break: normal;
+  white-space: normal;
+  text-shadow:
+    5px 2px #222324,
+    2px 4px #222324,
+    3px 5px #222324;
+}
+
+.scroll-down {
+  margin-top: 0.25rem;
+  font-family: "Montserrat", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: rgba(226, 232, 240, 0.9);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  padding: 0.65rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(2, 6, 23, 0.35);
+  backdrop-filter: blur(6px);
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.scroll-down:hover {
+  transform: translateY(2px);
+  border-color: rgba(56, 189, 248, 0.55);
+  background: rgba(2, 6, 23, 0.5);
+}
+
+/* Reveal "pop out" on scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px) scale(0.985);
+  filter: blur(6px);
+  transition:
+    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform, filter;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}

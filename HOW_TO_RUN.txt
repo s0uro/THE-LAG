@@ -1,0 +1,123 @@
+==============================
+ΠΩΣ ΝΑ ΤΡΕΞΕΙΣ ΤΟ PROJECT
+==============================
+
+ΠΡΟΫΠΟΘΕΣΕΙΣ
+-------------
+1. Να έχεις εγκατεστημένη Python (3.x).
+2. Από γραμμή εντολών (PowerShell) να μπορείς να τρέχεις την εντολή:
+   python --version
+
+3. Να έχεις εγκαταστήσει τα απαραίτητα πακέτα:
+   (τρέξε αυτά ΜΟΝΟ την πρώτη φορά)
+
+   pip install pandas scikit-learn xgboost shap matplotlib joblib openpyxl
+
+
+ΒΗΜΑ 1: Μπες στο φάκελο του project
+-----------------------------------
+Άνοιξε PowerShell και δώσε:
+
+   cd "C:\Users\giwrg\OneDrive\Desktop\THE-LAG"
+
+
+ΒΗΜΑ 2: Προεπεξεργασία δεδομένων (preprocessing)
+-----------------------------------------------
+Τρέχεις το script που διαβάζει το αρχικό αρχείο data.xlsx
+και φτιάχνει το καθαρισμένο αρχείο backend\data_clean.csv
+
+   python backend/preprocessing.py
+
+
+ΒΗΜΑ 3: Εκπαίδευση μοντέλων (XGBoost & MLP)
+------------------------------------------
+Τρέχεις το training script που:
+- φορτώνει το backend\data_clean.csv
+- εκπαιδεύει XGBoost και MLP
+- αποθηκεύει τα μοντέλα και το split info
+
+   python backend/training.py
+
+Μετά από αυτό θα έχουν δημιουργηθεί:
+- backend\model_xgb.joblib
+- backend\model_mlp.joblib
+- backend\split_info.joblib
+
+
+ΒΗΜΑ 4: Αξιολόγηση μοντέλων
+---------------------------
+Τρέχεις το evaluation script που:
+- φορτώνει τα εκπαιδευμένα μοντέλα
+- υπολογίζει accuracy, F1, confusion matrices
+- γράφει τα αποτελέσματα και σε αρχείο metrics.json
+
+   python backend/evaluation.py
+
+
+ΒΗΜΑ 5: SHAP Explainability (μόνο για XGBoost)
+----------------------------------------------
+Τρέχεις το script που φτιάχνει τα SHAP plots για το XGBoost:
+
+   python backend/shap_explainability.py
+
+Θα δημιουργηθούν αρχεία εικόνας (π.χ. shap_summary.png)
+στον κεντρικό φάκελο του project (THE-LAG).
+
+
+ΒΗΜΑ 6: Εκκίνηση API (FastAPI)
+------------------------------
+Το API φορτώνει τα εκπαιδευμένα μοντέλα και τα metrics και
+δέχεται κλήσεις από web (HTML/JS).
+
+1) Εγκατάσταση FastAPI & uvicorn (μία φορά):
+
+   pip install fastapi uvicorn pydantic
+
+2) Εκκίνηση API:
+
+   uvicorn backend.api:app --host 0.0.0.0 --port 8000 --reload
+
+3) Έλεγχος από browser:
+
+   Άνοιξε: http://localhost:8000/docs
+
+
+ΒΗΜΑ 7: HTML Dashboard
+----------------------
+Έχουμε έτοιμο ένα απλό dashboard:
+
+   frontend\index.html
+
+Για να το ανοίξεις:
+- διπλό κλικ στο αρχείο από τον File Explorer, ή
+- drag & drop μέσα σε browser (Chrome/Edge).
+
+Προϋπόθεση: να τρέχει το API από το ΒΗΜΑ 6.
+
+
+ΓΕΝΙΚΕΣ ΣΗΜΕΙΩΣΕΙΣ
+-----------------
+- Τα scripts πρέπει να τρέχουν ΠΑΝΤΑ από τον φάκελο:
+  C:\Users\giwrg\OneDrive\Desktop\THE-LAG
+
+- Αν θες να “καθαρίσεις” τα παλιά αποτελέσματα, μπορείς
+  να σβήσεις αρχεία όπως:
+  - shap_summary.png
+  - shap_dependence_*.png
+  - metrics.json
+  - backend\model_xgb.joblib
+  - backend\model_mlp.joblib
+  - backend\split_info.joblib
+
+  Από PowerShell (μέσα στον φάκελο THE-LAG) μπορείς π.χ. να τρέξεις:
+
+    del shap_summary.png
+    del shap_dependence_*.png
+    del metrics.json
+    del backend\model_xgb.joblib
+    del backend\model_mlp.joblib
+    del backend\split_info.joblib
+    del backend\data_clean.csv
+    del data.csv
+
+# uvicorn backend.api:app --host 0.0.0.0 --port 8000 --reload
