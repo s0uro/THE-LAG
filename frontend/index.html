@@ -14,7 +14,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden;cursor:none}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;min-height:100dvh;overflow-x:hidden;cursor:none;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
 
 #cursor{position:fixed;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .18s,height .18s}
 #cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(200,169,110,.4);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%)}
@@ -45,7 +45,7 @@ body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{width:50px;he
 .signup-modal,.login-modal{position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center}
 .signup-modal.open,.login-modal.open{display:flex}
 .signup-modal-overlay,.login-modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(12px)}
-.signup-modal-box,.login-modal-box{position:relative;z-index:1;background:var(--bg2);border:1px solid var(--gold-border);border-radius:14px;padding:2.8rem;width:min(460px,92vw);box-shadow:0 60px 120px rgba(0,0,0,.7);margin:auto}
+.signup-modal-box,.login-modal-box{position:relative;z-index:1;background:var(--bg2);border:1px solid var(--gold-border);border-radius:14px;padding:max(2.8rem,env(safe-area-inset-top)) max(2.8rem,env(safe-area-inset-right)) max(2.8rem,env(safe-area-inset-bottom)) max(2.8rem,env(safe-area-inset-left));width:min(460px,92vw);box-shadow:0 60px 120px rgba(0,0,0,.7);margin:auto}
 .signup-modal-close,.login-modal-close{position:absolute;top:1.1rem;right:1.2rem;background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;transition:color .2s;line-height:1}
 .signup-modal-close:hover,.login-modal-close:hover{color:var(--gold)}
 .form .title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600;color:var(--white);margin-bottom:.3rem;font-style:italic;text-align:center}
@@ -73,7 +73,7 @@ body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{width:50px;he
 .unlock-notice.visible{display:flex;transform:translateX(0)}
 .unlock-notice-dismiss{background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;flex-shrink:0}
 
-.hero-section{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:7rem 2rem 5rem;overflow:hidden}
+.hero-section{position:relative;z-index:2;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:max(7rem,env(safe-area-inset-top)) max(2rem,env(safe-area-inset-right)) max(5rem,env(safe-area-inset-bottom)) max(2rem,env(safe-area-inset-left));overflow:hidden}
 .hero-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
 .hero-eyebrow{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--gold);letter-spacing:.35em;margin-bottom:1.8rem;opacity:0;animation:fadeUp .9s .2s forwards;text-transform:uppercase}
 .hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(3.5rem,9vw,8rem);font-weight:300;line-height:1;letter-spacing:.06em;color:var(--white);opacity:0;animation:fadeUp 1s .35s forwards;font-style:italic;white-space:nowrap;text-align:center;width:100%}
@@ -85,7 +85,7 @@ body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{width:50px;he
 .hero-btn-primary:hover{background:var(--gold2);transform:translateY(-2px);box-shadow:0 14px 32px rgba(200,169,110,.22)}
 .hero-btn-secondary{font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:500;letter-spacing:.14em;padding:.88rem 2.5rem;background:transparent;color:var(--text);border:1px solid var(--gold-border);border-radius:3px;text-decoration:none;cursor:pointer;transition:all .25s;text-transform:uppercase;display:inline-block}
 .hero-btn-secondary:hover{color:var(--gold);border-color:var(--gold);transform:translateY(-2px)}
-.scroll-indicator{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;opacity:0;animation:fadeUp .7s 1.1s forwards}
+.scroll-indicator{position:absolute;bottom:max(2.5rem,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;opacity:0;animation:fadeUp .7s 1.1s forwards}
 .scroll-indicator span{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);letter-spacing:.35em;text-transform:uppercase}
 .scroll-arrow{width:16px;height:16px;border-right:1px solid var(--muted);border-bottom:1px solid var(--muted);transform:rotate(45deg);animation:arrowBounce 1.7s ease-in-out infinite}
 @keyframes arrowBounce{0%,100%{transform:rotate(45deg) translateY(0)}50%{transform:rotate(45deg) translateY(6px)}}
@@ -224,7 +224,7 @@ body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{width:50px;he
 #contact-msg.contact-msg-success{color:var(--gold)}
 #contact-msg.contact-msg-error{color:#e07060}
 
-footer{padding:2.5rem 3rem;text-align:center;border-top:1px solid var(--gold-border);font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.14em}
+footer{padding:2.5rem max(3rem,env(safe-area-inset-right)) max(2.5rem,env(safe-area-inset-bottom)) max(3rem,env(safe-area-inset-left));text-align:center;border-top:1px solid var(--gold-border);font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.14em}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
 .pipeline-step-status{font-family:"DM Mono",monospace;font-size:.68rem;color:var(--gold);letter-spacing:.06em;transition:opacity .3s}
@@ -240,7 +240,7 @@ footer{padding:2.5rem 3rem;text-align:center;border-top:1px solid var(--gold-bor
   .dash-inner{padding:2rem 1.5rem}
   .dashboard-section{padding:3rem 0 4rem}
   .contact-form{max-width:100%}
-  footer{padding:2rem 1.5rem;font-size:.7rem}
+  footer{padding:2rem max(1.5rem,env(safe-area-inset-right)) max(2rem,env(safe-area-inset-bottom)) max(1.5rem,env(safe-area-inset-left));font-size:.7rem}
 }
 
 /* ===== MOBILE ===== */
@@ -262,98 +262,117 @@ footer{padding:2.5rem 3rem;text-align:center;border-top:1px solid var(--gold-bor
   .hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
   .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 
-  /* Nav overlay - fullscreen menu */
+  /* ===== MOBILE ===== */
+
+  /* Hide cursor */
+  #cursor,#cursor-ring{display:none!important}
+  body{cursor:auto!important}
+
+  /* Header */
+  .auth-header{padding:.75rem 1rem;gap:.5rem;justify-content:space-between}
+  .header-logo{font-size:1.15rem;white-space:nowrap;flex-shrink:0}
+  .auth-buttons{display:none!important}
+  .header-logout-wrap{display:none!important}
+  .hamburger{display:flex!important;flex-direction:column;justify-content:center;gap:5px;
+    cursor:pointer;z-index:1002;padding:.5rem;background:none;border:none;flex-shrink:0}
+  .hamburger span{display:block;width:24px;height:2px;background:var(--gold);border-radius:2px;transition:all .3s}
+  .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .hamburger.open span:nth-child(2){opacity:0}
+  .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+  /* Fullscreen nav overlay */
   .header-nav{
-    display:none;
-    position:fixed;top:0;left:0;right:0;bottom:0;
-    background:rgba(7,8,15,.98);
+    display:none!important;
+    position:fixed;inset:0;
+    background:rgba(7,8,15,.97);
     flex-direction:column;align-items:center;justify-content:center;
-    gap:1.8rem;z-index:1001;
-    backdrop-filter:blur(20px);
+    gap:1.6rem;z-index:1001;backdrop-filter:blur(20px);
   }
   .header-nav.mobile-open{display:flex!important}
-  .mobile-auth-row{display:flex!important}
   .header-nav a{
-    font-size:1.2rem;font-weight:400;
-    padding:.8rem 2.5rem;
-    letter-spacing:.18em;
-    color:var(--text);
-    border:1px solid transparent;
-    border-radius:4px;
-    width:200px;text-align:center;
+    font-size:1.1rem;padding:.75rem 2.5rem;letter-spacing:.18em;
+    color:var(--text);border:1px solid transparent;border-radius:4px;
+    min-width:200px;text-align:center;min-height:48px;
+    display:inline-flex;align-items:center;justify-content:center;
   }
   .header-nav a:hover,.header-nav a.active{color:var(--gold);border-color:var(--gold-border)}
 
-  /* Mobile auth buttons inside nav */
-  .mobile-auth-row{display:flex;gap:.8rem;margin-top:.5rem}
+  /* Auth buttons inside nav */
+  .mobile-auth-row{display:flex!important;gap:.8rem;margin-top:.8rem}
   .mobile-auth-row button{
-    padding:.65rem 1.6rem;border-radius:4px;
+    padding:.7rem 1.8rem;border-radius:4px;min-height:48px;
     font-family:'Outfit',sans-serif;font-size:.85rem;
-    letter-spacing:.08em;cursor:pointer;text-transform:uppercase;
-    transition:all .2s;
+    letter-spacing:.08em;cursor:pointer;text-transform:uppercase;transition:all .2s;
   }
   .mobile-login-btn{background:transparent;border:1px solid var(--gold-border);color:var(--text)}
-  .mobile-login-btn:hover{border-color:var(--gold);color:var(--gold)}
   .mobile-signup-btn{background:var(--gold);border:none;color:#07080f;font-weight:600}
-  .mobile-signup-btn:hover{background:var(--gold2)}
-  .mobile-logout-row{display:none;flex-direction:column;align-items:center;gap:.6rem;margin-top:.5rem}
+  .mobile-logout-row{display:none;flex-direction:column;align-items:center;gap:.6rem;margin-top:.8rem}
   .mobile-welcome{font-size:.9rem;color:var(--muted);font-style:italic;font-family:'Cormorant Garamond',serif}
   .mobile-welcome span{color:var(--gold)}
   .mobile-logout-btn{
-    padding:.55rem 1.4rem;border-radius:4px;
+    padding:.6rem 1.6rem;border-radius:4px;min-height:48px;
     background:transparent;border:1px solid rgba(180,80,60,.4);
-    color:rgba(200,110,90,.9);
-    font-family:'Outfit',sans-serif;font-size:.78rem;
-    cursor:pointer;text-transform:uppercase;
+    color:rgba(200,110,90,.9);font-family:'Outfit',sans-serif;
+    font-size:.82rem;cursor:pointer;text-transform:uppercase;
   }
 
   /* Hero */
-  .hero-section{padding:4rem 1rem 3rem}
-  .hero-title{font-size:2.2rem;white-space:normal;text-align:center;line-height:1.2}
+  .hero-section{padding:5rem 1.2rem 3rem}
+  .hero-title{font-size:2.4rem;white-space:normal;text-align:center;line-height:1.15}
   .hero-cta-row{flex-direction:column;align-items:center;gap:.8rem}
-  .hero-btn-primary,.hero-btn-secondary{width:100%;max-width:280px;text-align:center;min-height:48px;padding:1rem 1.5rem;display:inline-flex;align-items:center;justify-content:center}
+  .hero-btn-primary,.hero-btn-secondary{
+    width:100%;max-width:280px;text-align:center;
+    min-height:48px;padding:1rem 1.5rem;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
   .word{font-size:.85rem;max-width:100%;padding:0 .5rem}
-  .scroll-indicator{bottom:1.5rem}
 
   /* Sections */
   .section-wrap{padding:0 1.2rem}
   .dash-inner{padding:1.5rem 1rem}
   .dash-upload-center{max-width:100%}
+  .about-grid{grid-template-columns:1fr}
+  .about-stats{grid-template-columns:1fr 1fr}
 
-  /* Flip cards tap to reveal */
-  .flip-card{height:auto;min-height:180px;perspective:none}
+  /* Flip cards */
+  .flip-card{height:auto;min-height:180px}
   .flip-card-inner{transition:transform .5s}
   .flip-card.tapped .flip-card-inner{transform:rotateY(180deg)}
   .flip-hint{display:none}
-  .flip-card::after{content:'TAP TO REVEAL';font-family:'DM Mono',monospace;font-size:.52rem;color:var(--muted);letter-spacing:.2em;position:absolute;bottom:.9rem;right:1.1rem;opacity:.6}
+  .flip-card::after{
+    content:'TAP TO REVEAL';font-family:'DM Mono',monospace;
+    font-size:.52rem;color:var(--muted);letter-spacing:.2em;
+    position:absolute;bottom:.9rem;right:1.1rem;opacity:.6;
+  }
   .flip-card.tapped::after{display:none}
 
   /* Pipeline */
-  .pipeline-steps{gap:.25rem}
+  .pipeline-steps{gap:.25rem;flex-wrap:wrap;justify-content:center}
   .pipeline-step{min-width:65px;padding:.9rem .6rem}
-  .pipeline-step-num{font-size:1.2rem}
   .pipeline-arrow{font-size:.9rem;padding:0}
 
-  /* Metric cards */
+  /* Metrics */
   .metric-row{gap:.4rem}
   .metric-card{min-width:55px;padding:.7rem .35rem}
   .metric-val{font-size:1.2rem}
   .metric-key{font-size:.5rem}
 
-  /* Touch-friendly buttons */
-  .run-btn,.contact-btn,.form .submit{min-height:48px;padding:1rem}
-  .load-btn,.uploaded-file-delete,.auth-neumorphic-btn{min-height:44px;padding:.5rem 1rem}
-  .header-nav a{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+  /* Contact */
+  .contact-card{padding:1.5rem 1rem}
+  .contact-section{padding:3rem 0}
 
-  /* Consent bar */
-  #consent-bar{flex-direction:column;gap:.8rem;padding:1rem;text-align:center}
-  #consent-bar p{max-width:100%}
+  /* Touch targets */
+  .run-btn,.contact-btn,.form .submit{min-height:48px;padding:1rem}
+  .load-btn,.uploaded-file-delete{min-height:44px;padding:.5rem 1rem}
 
   /* Modals */
-  .signup-modal-box,.login-modal-box{padding:2rem 1.5rem;width:95vw;max-width:min(460px,95vw)}
-  .form .flex{flex-direction:column}
+  .signup-modal-box,.login-modal-box{padding:2rem 1.2rem;width:95vw}
+  .form .flex{flex-direction:column;gap:0}
 
-  /* Unlock notice on small screens */
+  /* Consent */
+  #consent-bar{flex-direction:column;gap:.8rem;padding:1rem;text-align:center}
+
+  /* Unlock notice */
   .unlock-notice{left:1rem;right:1rem;max-width:none;top:auto;bottom:5rem}
 }
 
@@ -370,7 +389,7 @@ footer{padding:2.5rem 3rem;text-align:center;border-top:1px solid var(--gold-bor
   .uploaded-file-delete{min-height:48px}
   .flip-card{min-height:160px}
   .pipeline-step-label,.flip-title{font-size:1.1rem}
-  footer{padding:1.5rem 1rem;font-size:.6rem}
+  footer{padding:1.5rem max(1rem,env(safe-area-inset-right)) max(1.5rem,env(safe-area-inset-bottom)) max(1rem,env(safe-area-inset-left));font-size:.6rem}
 }
 
 </style>
@@ -687,11 +706,55 @@ footer{padding:2.5rem 3rem;text-align:center;border-top:1px solid var(--gold-bor
 
 <style>.consent-bar[data-hidden="true"]{display:none!important}</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
 // Auto-detect API base: use same origin on Railway, localhost for local dev
 window.API_BASE_OVERRIDE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') 
   ? 'http://localhost:8000' 
   : '';
+
+// EmailJS Contact Form
+(function(){
+  // ⚠️ Replace these with your actual EmailJS credentials
+  const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
+  const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
+  const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+
+  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+  document.getElementById('contact-form')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn    = document.getElementById('contact-submit-btn');
+    const msgEl  = document.getElementById('contact-msg');
+    const name   = document.getElementById('contact-name').value.trim();
+    const email  = document.getElementById('contact-email').value.trim();
+    const message= document.getElementById('contact-message').value.trim();
+
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    msgEl.textContent = '';
+    msgEl.className = 'contact-msg';
+
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        from_name:  name,
+        from_email: email,
+        message:    message,
+        to_email:   'contect.thelag357@yahoo.com',
+      });
+      msgEl.textContent = '✓ Message sent — thank you!';
+      msgEl.classList.add('contact-msg-success');
+      this.reset();
+    } catch(err) {
+      msgEl.textContent = '✗ Failed to send. Please try again.';
+      msgEl.classList.add('contact-msg-error');
+      console.error('EmailJS error:', err);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Send Message';
+    }
+  });
+})();
 </script>
 <script>
 if(history.scrollRestoration)history.scrollRestoration='manual';
