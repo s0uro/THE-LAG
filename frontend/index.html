@@ -280,40 +280,60 @@ footer{padding:2.5rem max(3rem,env(safe-area-inset-right)) max(2.5rem,env(safe-a
   .hamburger.open span:nth-child(2){opacity:0}
   .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 
-  /* Fullscreen nav overlay */
+  /* Dropdown drawer — slides down from header */
   .header-nav{
     display:none!important;
-    position:fixed;inset:0;
-    background:rgba(7,8,15,.97);
-    flex-direction:column;align-items:center;justify-content:center;
-    gap:1.6rem;z-index:1001;backdrop-filter:blur(20px);
+    position:fixed;top:56px;left:0;right:0;
+    background:rgba(7,8,15,.98);
+    border-bottom:1px solid var(--gold-border);
+    flex-direction:column;align-items:stretch;
+    gap:0;z-index:1001;
+    backdrop-filter:blur(20px);
+    box-shadow:0 12px 40px rgba(0,0,0,.5);
+    max-height:calc(100vh - 56px);
+    overflow-y:auto;
+    padding:.5rem 0 1rem;
   }
   .header-nav.mobile-open{display:flex!important}
   .header-nav a{
-    font-size:1.1rem;padding:.75rem 2.5rem;letter-spacing:.18em;
-    color:var(--text);border:1px solid transparent;border-radius:4px;
-    min-width:200px;text-align:center;min-height:48px;
-    display:inline-flex;align-items:center;justify-content:center;
+    font-size:.95rem;padding:1rem 1.8rem;letter-spacing:.12em;
+    color:var(--muted);border:none;border-bottom:1px solid rgba(200,169,110,.07);
+    border-radius:0;width:100%;text-align:center;min-height:52px;
+    display:flex;align-items:center;justify-content:center;
+    transition:all .2s;
   }
-  .header-nav a:hover,.header-nav a.active{color:var(--gold);border-color:var(--gold-border)}
+  .header-nav a:last-of-type{border-bottom:none}
+  .header-nav a:hover,.header-nav a.active{
+    color:var(--gold);background:rgba(200,169,110,.05);
+  }
 
-  /* Auth buttons inside nav */
-  .mobile-auth-row{display:flex!important;gap:.8rem;margin-top:.8rem}
+  /* Auth buttons inside drawer */
+  .mobile-auth-row{
+    display:flex!important;gap:.8rem;
+    margin:.8rem 1.8rem 0;
+    padding-top:.8rem;
+    border-top:1px solid var(--gold-border);
+    justify-content:center;
+  }
   .mobile-auth-row button{
-    padding:.7rem 1.8rem;border-radius:4px;min-height:48px;
-    font-family:'Outfit',sans-serif;font-size:.85rem;
+    flex:1;padding:.7rem 1rem;border-radius:4px;min-height:48px;
+    font-family:'Outfit',sans-serif;font-size:.82rem;
     letter-spacing:.08em;cursor:pointer;text-transform:uppercase;transition:all .2s;
   }
   .mobile-login-btn{background:transparent;border:1px solid var(--gold-border);color:var(--text)}
   .mobile-signup-btn{background:var(--gold);border:none;color:#07080f;font-weight:600}
-  .mobile-logout-row{display:none;flex-direction:column;align-items:center;gap:.6rem;margin-top:.8rem}
-  .mobile-welcome{font-size:.9rem;color:var(--muted);font-style:italic;font-family:'Cormorant Garamond',serif}
+  .mobile-logout-row{
+    display:none;flex-direction:column;align-items:center;
+    gap:.5rem;margin:.8rem 1.8rem 0;
+    padding-top:.8rem;border-top:1px solid var(--gold-border);
+  }
+  .mobile-welcome{font-size:.85rem;color:var(--muted);font-style:italic;font-family:'Cormorant Garamond',serif}
   .mobile-welcome span{color:var(--gold)}
   .mobile-logout-btn{
-    padding:.6rem 1.6rem;border-radius:4px;min-height:48px;
+    padding:.6rem 1.4rem;border-radius:4px;min-height:44px;
     background:transparent;border:1px solid rgba(180,80,60,.4);
     color:rgba(200,110,90,.9);font-family:'Outfit',sans-serif;
-    font-size:.82rem;cursor:pointer;text-transform:uppercase;
+    font-size:.78rem;cursor:pointer;text-transform:uppercase;
   }
 
   /* Hero */
@@ -868,6 +888,12 @@ document.getElementById('unlock-notice-dismiss').addEventListener('click',()=>{l
     hamburger.classList.remove('open');
   }
 
+  function setNavTop(){
+    const headerH = document.querySelector('.auth-header')?.offsetHeight || 56;
+    nav.style.top = headerH + 'px';
+    nav.style.maxHeight = (window.innerHeight - headerH) + 'px';
+  }
+
   function updateMobileAuth(){
     let user = null;
     try { const r = localStorage.getItem('thelag_user'); user = r ? JSON.parse(r) : null; } catch(e){}
@@ -889,7 +915,7 @@ document.getElementById('unlock-notice-dismiss').addEventListener('click',()=>{l
     e.stopPropagation();
     const isOpen = nav.classList.toggle('mobile-open');
     hamburger.classList.toggle('open', isOpen);
-    if(isOpen) updateMobileAuth();
+    if(isOpen){ updateMobileAuth(); setNavTop(); }
   });
 
   // Close when nav link clicked
@@ -931,7 +957,7 @@ document.getElementById('unlock-notice-dismiss').addEventListener('click',()=>{l
     document.body.style.cursor = 'auto';
   }
 
-  window.addEventListener('resize', () => { if(!isMobile()) closeNav(); });
+  window.addEventListener('resize', () => { if(!isMobile()) closeNav(); else setNavTop(); });
 
   // Tap to flip cards on mobile
   document.querySelectorAll('.flip-card').forEach(card => {
