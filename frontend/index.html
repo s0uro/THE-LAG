@@ -216,6 +216,53 @@ footer{padding:2.5rem 3rem;text-align:center;border-top:1px solid var(--gold-bor
 @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
 .pipeline-step-status{font-family:"DM Mono",monospace;font-size:.68rem;color:var(--gold);letter-spacing:.06em;transition:opacity .3s}
 @keyframes dots{0%,20%{content:"..."}40%{content:"...."}60%,100%{content:"....."}}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media(max-width:768px){
+  /* Header: hamburger menu */
+  .auth-header{padding:.75rem 1.2rem;gap:.8rem}
+  .header-logo{font-size:1.2rem;white-space:nowrap}
+  .header-nav{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(7,8,15,.97);flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;z-index:999}
+  .header-nav.mobile-open{display:flex}
+  .header-nav a{font-size:1.1rem;padding:.7rem 2rem;letter-spacing:.15em}
+  .auth-buttons{display:none}
+  .header-logout-wrap{display:none!important}
+  .hamburger{display:flex;flex-direction:column;gap:5px;cursor:pointer;z-index:1001;padding:.4rem;background:none;border:none}
+  .hamburger span{display:block;width:22px;height:2px;background:var(--gold);transition:all .3s;border-radius:2px}
+  .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .hamburger.open span:nth-child(2){opacity:0}
+  .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+  /* Hero */
+  .hero-title{font-size:3.2rem;white-space:normal}
+  .hero-cta-row{flex-direction:column;align-items:center}
+  .hero-btn-primary,.hero-btn-secondary{width:100%;max-width:280px;text-align:center}
+
+  /* Dashboard */
+  .dash-inner{padding:1.5rem 1rem}
+  .dash-upload-center{max-width:100%}
+
+  /* About grid already handled above */
+  .section-wrap{padding:0 1.2rem}
+
+  /* Flip cards: tap to flip on mobile */
+  .flip-card{height:auto;min-height:200px}
+  .flip-card-inner{transition:transform .5s}
+  .flip-card.tapped .flip-card-inner{transform:rotateY(180deg)}
+  .flip-hint{display:none}
+  .flip-card::after{content:'TAP TO REVEAL';font-family:'DM Mono',monospace;font-size:.52rem;color:var(--muted);letter-spacing:.2em;position:absolute;bottom:1rem;right:1.2rem;opacity:.6}
+  .flip-card.tapped::after{display:none}
+
+  /* Pipeline steps */
+  .pipeline-steps{gap:.3rem}
+  .pipeline-step{min-width:70px;padding:1rem .8rem}
+  .pipeline-arrow{font-size:1rem;padding:0 .1rem}
+
+  /* Metric cards */
+  .metric-row{gap:.4rem}
+  .metric-card{min-width:60px;padding:.7rem .4rem}
+  .metric-val{font-size:1.3rem}
+}
 </style>
 </head>
 <body>
@@ -233,13 +280,16 @@ footer{padding:2.5rem 3rem;text-align:center;border-top:1px solid var(--gold-bor
 
 <header class="auth-header">
   <div class="header-logo">The Lag</div>
-  <nav class="header-nav">
+  <nav class="header-nav" id="main-nav">
     <a href="#project" class="active">Home</a>
     <a href="#about">About</a>
     <a href="#dashboard">Analyse Data</a>
     <a href="#live-test">Live Test</a>
     <a href="#contact">Contact</a>
   </nav>
+  <button class="hamburger" id="hamburger" aria-label="Menu" style="display:none">
+    <span></span><span></span><span></span>
+  </button>
   <div id="auth-buttons" class="auth-buttons">
     <button class="auth-neumorphic-btn" type="button" id="btn-login">Log in</button>
     <button class="auth-neumorphic-btn" type="button" id="btn-signup">Sign up</button>
@@ -609,5 +659,50 @@ window.addEventListener('scroll',()=>{if(window.scrollY>120&&localStorage.getIte
 document.getElementById('unlock-notice-dismiss').addEventListener('click',()=>{localStorage.setItem(DKEY,'true');un.classList.remove('visible')});
 </script>
 <script src="frontend.js"></script>
+<script>
+/* ===== MOBILE JS ===== */
+(function(){
+  const hamburger = document.getElementById('hamburger');
+  const nav = document.getElementById('main-nav');
+  const authBtns = document.getElementById('auth-buttons');
+  const logoutWrap = document.getElementById('header-logout-wrap');
+
+  function isMobile(){ return window.innerWidth <= 768; }
+
+  function setupMobile(){
+    if(isMobile()){
+      hamburger.style.display = 'flex';
+      if(authBtns) authBtns.style.display = 'none';
+    } else {
+      hamburger.style.display = 'none';
+      nav.classList.remove('mobile-open');
+      hamburger.classList.remove('open');
+    }
+  }
+
+  hamburger.addEventListener('click', () => {
+    nav.classList.toggle('mobile-open');
+    hamburger.classList.toggle('open');
+  });
+
+  // Close nav when a link is clicked
+  nav.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      nav.classList.remove('mobile-open');
+      hamburger.classList.remove('open');
+    });
+  });
+
+  window.addEventListener('resize', setupMobile);
+  setupMobile();
+
+  // Tap to flip cards on mobile
+  document.querySelectorAll('.flip-card').forEach(card => {
+    card.addEventListener('click', () => {
+      if(isMobile()) card.classList.toggle('tapped');
+    });
+  });
+})();
+</script>
 </body>
 </html>
