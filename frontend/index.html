@@ -164,8 +164,11 @@ body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{width:50px;he
 
 .metrics-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem}
 .metrics-title{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--gold);letter-spacing:.25em;text-transform:uppercase}
-.load-btn{padding:.38rem .95rem;background:transparent;border:1px solid var(--gold-border);border-radius:3px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.7rem;letter-spacing:.1em;cursor:pointer;transition:all .2s;text-transform:uppercase}
-.load-btn:hover{border-color:var(--gold);color:var(--gold)}
+.metrics-actions{display:flex;align-items:center;gap:.5rem}
+.load-btn,.clear-btn{padding:.38rem .95rem;background:transparent;border:1px solid var(--gold-border);border-radius:3px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.7rem;letter-spacing:.1em;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.load-btn:hover,.clear-btn:hover{border-color:var(--gold);color:var(--gold)}
+.clear-btn{border-color:rgba(200,169,110,.35);color:var(--muted)}
+.clear-btn:hover{border-color:rgba(180,100,80,.5);color:rgba(220,130,110,.9)}
 .metric-cards{display:flex;flex-direction:column;gap:1.2rem;margin-top:.8rem}
 .metric-model-label{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--gold);letter-spacing:.25em;text-transform:uppercase;display:block;margin-bottom:.6rem}
 .metric-row{display:flex;gap:.7rem;flex-wrap:wrap}
@@ -614,7 +617,10 @@ footer{padding:2.5rem 3rem;text-align:center;border-top:1px solid var(--gold-bor
         <div class="dash-metrics-wrap" id="metrics">
           <div class="metrics-header">
             <span class="metrics-title">Model Metrics</span>
-            <button id="load-metrics-btn" class="load-btn">Load</button>
+            <div class="metrics-actions">
+              <button id="load-metrics-btn" class="load-btn">Load</button>
+              <button type="button" id="clear-results-btn" class="clear-btn">Clear results</button>
+            </div>
           </div>
           <div class="metric-cards" id="metric-cards">
             <div class="metric-model-group" id="metric-xgb">
