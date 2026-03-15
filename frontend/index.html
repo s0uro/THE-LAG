@@ -220,15 +220,25 @@ footer{padding:2.5rem 3rem;text-align:center;border-top:1px solid var(--gold-bor
 /* ===== MOBILE RESPONSIVE ===== */
 @media(max-width:768px){
   /* Header: hamburger menu */
-  .auth-header{padding:.75rem 1.2rem;gap:.8rem}
-  .header-logo{font-size:1.2rem;white-space:nowrap}
+  .auth-header{padding:.75rem 1.2rem;gap:.8rem;justify-content:space-between}
+  .header-logo{font-size:1.15rem;white-space:nowrap;flex-shrink:0}
   .header-nav{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(7,8,15,.97);flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;z-index:999}
   .header-nav.mobile-open{display:flex}
   .header-nav a{font-size:1.1rem;padding:.7rem 2rem;letter-spacing:.15em}
-  .auth-buttons{display:none}
+  /* Hide desktop auth buttons - shown inside nav on mobile */
+  .auth-buttons{display:none!important}
   .header-logout-wrap{display:none!important}
-  .hamburger{display:flex;flex-direction:column;gap:5px;cursor:pointer;z-index:1001;padding:.4rem;background:none;border:none}
-  .hamburger span{display:block;width:22px;height:2px;background:var(--gold);transition:all .3s;border-radius:2px}
+  /* Mobile auth buttons inside nav overlay */
+  .mobile-auth-row{display:flex;gap:.8rem;margin-top:1rem}
+  .mobile-auth-row button{padding:.55rem 1.4rem;border-radius:3px;font-family:'Outfit',sans-serif;font-size:.85rem;letter-spacing:.08em;cursor:pointer;text-transform:uppercase}
+  .mobile-login-btn{background:transparent;border:1px solid var(--gold-border);color:var(--text)}
+  .mobile-signup-btn{background:var(--gold);border:none;color:#07080f;font-weight:600}
+  .mobile-logout-row{display:none;flex-direction:column;align-items:center;gap:.5rem;margin-top:1rem}
+  .mobile-welcome{font-size:.85rem;color:var(--muted);font-style:italic;font-family:'Cormorant Garamond',serif}
+  .mobile-welcome span{color:var(--gold)}
+  .mobile-logout-btn{padding:.5rem 1.4rem;border-radius:3px;background:transparent;border:1px solid rgba(180,80,60,.35);color:rgba(200,110,90,.8);font-family:'Outfit',sans-serif;font-size:.78rem;cursor:pointer;text-transform:uppercase}
+  .hamburger{display:flex!important;flex-direction:column;gap:5px;cursor:pointer;z-index:1001;padding:.5rem;background:none;border:none;flex-shrink:0}
+  .hamburger span{display:block;width:24px;height:2px;background:var(--gold);transition:all .3s;border-radius:2px}
   .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
   .hamburger.open span:nth-child(2){opacity:0}
   .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
@@ -286,6 +296,15 @@ footer{padding:2.5rem 3rem;text-align:center;border-top:1px solid var(--gold-bor
     <a href="#dashboard">Analyse Data</a>
     <a href="#live-test">Live Test</a>
     <a href="#contact">Contact</a>
+    <!-- Mobile auth buttons shown inside nav overlay -->
+    <div class="mobile-auth-row" id="mobile-auth-row">
+      <button class="mobile-login-btn" id="mobile-login-btn" type="button">Log in</button>
+      <button class="mobile-signup-btn" id="mobile-signup-btn" type="button">Sign up</button>
+    </div>
+    <div class="mobile-logout-row" id="mobile-logout-row">
+      <span class="mobile-welcome">Welcome, <span id="mobile-welcome-name"></span></span>
+      <button class="mobile-logout-btn" id="mobile-logout-btn" type="button">Log out</button>
+    </div>
   </nav>
   <button class="hamburger" id="hamburger" aria-label="Menu" style="display:none">
     <span></span><span></span><span></span>
@@ -664,37 +683,76 @@ document.getElementById('unlock-notice-dismiss').addEventListener('click',()=>{l
 (function(){
   const hamburger = document.getElementById('hamburger');
   const nav = document.getElementById('main-nav');
-  const authBtns = document.getElementById('auth-buttons');
-  const logoutWrap = document.getElementById('header-logout-wrap');
 
   function isMobile(){ return window.innerWidth <= 768; }
 
-  function setupMobile(){
-    if(isMobile()){
-      hamburger.style.display = 'flex';
-      if(authBtns) authBtns.style.display = 'none';
+  function closeNav(){
+    nav.classList.remove('mobile-open');
+    hamburger.classList.remove('open');
+  }
+
+  function updateMobileAuth(){
+    const user = (() => { try { const r=localStorage.getItem('thelag_user'); return r?JSON.parse(r):null; } catch(e){return null;} })();
+    const authRow = document.getElementById('mobile-auth-row');
+    const logoutRow = document.getElementById('mobile-logout-row');
+    const welcomeName = document.getElementById('mobile-welcome-name');
+    if(user && user.username){
+      if(authRow) authRow.style.display = 'none';
+      if(logoutRow) logoutRow.style.display = 'flex';
+      if(welcomeName) welcomeName.textContent = user.firstName || user.username;
     } else {
-      hamburger.style.display = 'none';
-      nav.classList.remove('mobile-open');
-      hamburger.classList.remove('open');
+      if(authRow) authRow.style.display = 'flex';
+      if(logoutRow) logoutRow.style.display = 'none';
     }
   }
 
-  hamburger.addEventListener('click', () => {
+  hamburger.addEventListener('click', (e) => {
+    e.stopPropagation();
     nav.classList.toggle('mobile-open');
     hamburger.classList.toggle('open');
+    if(nav.classList.contains('mobile-open')) updateMobileAuth();
   });
 
   // Close nav when a link is clicked
   nav.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => {
-      nav.classList.remove('mobile-open');
-      hamburger.classList.remove('open');
-    });
+    a.addEventListener('click', closeNav);
   });
 
-  window.addEventListener('resize', setupMobile);
-  setupMobile();
+  // Close nav when tapping outside
+  document.addEventListener('click', (e) => {
+    if(nav.classList.contains('mobile-open') && !nav.contains(e.target) && e.target !== hamburger){
+      closeNav();
+    }
+  });
+
+  // Mobile login/signup/logout buttons
+  document.getElementById('mobile-login-btn')?.addEventListener('click', () => {
+    closeNav();
+    document.getElementById('btn-login')?.click();
+  });
+  document.getElementById('mobile-signup-btn')?.addEventListener('click', () => {
+    closeNav();
+    document.getElementById('btn-signup')?.click();
+  });
+  document.getElementById('mobile-logout-btn')?.addEventListener('click', () => {
+    closeNav();
+    localStorage.removeItem('thelag_user');
+    if(typeof updateHeaderForUser === 'function') updateHeaderForUser();
+    updateMobileAuth();
+  });
+
+  // Hide cursor on mobile
+  if(isMobile()){
+    const cur = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    if(cur) cur.style.display = 'none';
+    if(ring) ring.style.display = 'none';
+    document.body.style.cursor = 'auto';
+  }
+
+  window.addEventListener('resize', () => {
+    if(!isMobile()) closeNav();
+  });
 
   // Tap to flip cards on mobile
   document.querySelectorAll('.flip-card').forEach(card => {
