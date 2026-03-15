@@ -46,35 +46,37 @@ def get_feature_target(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
     if TARGET_COL not in df.columns:
         raise KeyError(f"Λείπει η στήλη target ('{TARGET_COL}') από τα δεδομένα.")
 
-    # Αντιγράφουμε για να μην αλλάζουμε το αρχικό DataFrame
     df = df.copy()
 
-    # Μετατροπή όλων των feature στηλών σε αριθμητικές / κωδικοποιημένες κατηγορίες
     for col in df.columns:
         if col == TARGET_COL:
             continue
-
-        if df[col].dtype == "object":
-            # Προσπάθεια για numeric
+        if df[col].dtype == "object" or str(df[col].dtype) == "string":
             numeric = pd.to_numeric(df[col], errors="coerce")
             non_na_ratio = numeric.notna().mean()
-
             if non_na_ratio > 0.5:
-                # Αν η πλειοψηφία είναι νούμερα, κράτα την numeric εκδοχή
                 df[col] = numeric
             else:
-                # Αλλιώς, κάνε το κατηγορική και βάλε codes
                 df[col] = df[col].astype("category").cat.codes
 
     X = df.drop(columns=[TARGET_COL])
 
-    # Ασφάλεια: καμία στήλη του X να μην μείνει ως object
+    # Force ALL non-numeric columns to int codes — XGBoost requires int/float/bool only
+    for col in X.columns:
+        if X[col].dtype == "object" or str(X[col].dtype) == "string":
+            X[col] = X[col].astype("category").cat.codes
+        elif hasattr(X[col], "cat"):
+            X[col] = X[col].cat.codes
+        # Convert any remaining non-numeric to numeric
+        if X[col].dtype not in ["int64", "float64", "int32", "float32", "bool", "int8", "int16"]:
+            X[col] = pd.to_numeric(X[col], errors="coerce")
+
+    X = X.fillna(0)
+
+    # Final safety check — ensure no object dtypes remain
     for col in X.columns:
         if X[col].dtype == "object":
             X[col] = X[col].astype("category").cat.codes
-
-    # Αφαίρεση NaN για να μπορεί να εκπαιδευτεί το MLP
-    X = X.fillna(0)
 
     y = df[TARGET_COL]
     return X, y

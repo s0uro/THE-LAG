@@ -67,10 +67,18 @@ def get_feature_target(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
     X = df.drop(columns=[TARGET_COL])
 
     for col in X.columns:
-        if X[col].dtype == "object":
+        if X[col].dtype == "object" or str(X[col].dtype) == "string":
             X[col] = X[col].astype("category").cat.codes
+        elif hasattr(X[col], "cat"):
+            X[col] = X[col].cat.codes
+        if X[col].dtype not in ["int64","float64","int32","float32","bool","int8","int16"]:
+            X[col] = pd.to_numeric(X[col], errors="coerce")
 
     X = X.fillna(0)
+
+    for col in X.columns:
+        if X[col].dtype == "object":
+            X[col] = X[col].astype("category").cat.codes
 
     y = df[TARGET_COL]
     return X, y
