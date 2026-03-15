@@ -219,60 +219,98 @@ footer{padding:2.5rem 3rem;text-align:center;border-top:1px solid var(--gold-bor
 
 /* ===== MOBILE RESPONSIVE ===== */
 @media(max-width:768px){
-  /* Header: hamburger menu */
-  .auth-header{padding:.75rem 1.2rem;gap:.8rem;justify-content:space-between}
-  .header-logo{font-size:1.15rem;white-space:nowrap;flex-shrink:0}
-  .header-nav{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(7,8,15,.97);flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;z-index:999}
-  .header-nav.mobile-open{display:flex}
-  .header-nav a{font-size:1.1rem;padding:.7rem 2rem;letter-spacing:.15em}
-  /* Hide desktop auth buttons - shown inside nav on mobile */
+  /* Hide cursor */
+  #cursor,#cursor-ring{display:none!important}
+  body{cursor:auto!important}
+
+  /* Header */
+  .auth-header{padding:.7rem 1rem;gap:.5rem;justify-content:space-between}
+  .header-logo{font-size:1.1rem;white-space:nowrap;flex-shrink:0}
   .auth-buttons{display:none!important}
   .header-logout-wrap{display:none!important}
-  /* Mobile auth buttons inside nav overlay */
-  .mobile-auth-row{display:flex;gap:.8rem;margin-top:1rem}
-  .mobile-auth-row button{padding:.55rem 1.4rem;border-radius:3px;font-family:'Outfit',sans-serif;font-size:.85rem;letter-spacing:.08em;cursor:pointer;text-transform:uppercase}
-  .mobile-login-btn{background:transparent;border:1px solid var(--gold-border);color:var(--text)}
-  .mobile-signup-btn{background:var(--gold);border:none;color:#07080f;font-weight:600}
-  .mobile-logout-row{display:none;flex-direction:column;align-items:center;gap:.5rem;margin-top:1rem}
-  .mobile-welcome{font-size:.85rem;color:var(--muted);font-style:italic;font-family:'Cormorant Garamond',serif}
-  .mobile-welcome span{color:var(--gold)}
-  .mobile-logout-btn{padding:.5rem 1.4rem;border-radius:3px;background:transparent;border:1px solid rgba(180,80,60,.35);color:rgba(200,110,90,.8);font-family:'Outfit',sans-serif;font-size:.78rem;cursor:pointer;text-transform:uppercase}
-  .hamburger{display:flex!important;flex-direction:column;gap:5px;cursor:pointer;z-index:1001;padding:.5rem;background:none;border:none;flex-shrink:0}
-  .hamburger span{display:block;width:24px;height:2px;background:var(--gold);transition:all .3s;border-radius:2px}
+
+  /* Hamburger always visible on mobile */
+  .hamburger{display:flex!important;flex-direction:column;justify-content:center;gap:5px;cursor:pointer;z-index:1002;padding:.5rem;background:none;border:none;flex-shrink:0}
+  .hamburger span{display:block;width:24px;height:2px;background:var(--gold);border-radius:2px;transition:all .3s ease}
   .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
-  .hamburger.open span:nth-child(2){opacity:0}
+  .hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
   .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 
-  /* Hero */
-  .hero-title{font-size:3.2rem;white-space:normal}
-  .hero-cta-row{flex-direction:column;align-items:center}
-  .hero-btn-primary,.hero-btn-secondary{width:100%;max-width:280px;text-align:center}
+  /* Nav overlay - fullscreen menu */
+  .header-nav{
+    display:none;
+    position:fixed;top:0;left:0;right:0;bottom:0;
+    background:rgba(7,8,15,.98);
+    flex-direction:column;align-items:center;justify-content:center;
+    gap:1.8rem;z-index:1001;
+    backdrop-filter:blur(20px);
+  }
+  .header-nav.mobile-open{display:flex!important}
+  .header-nav a{
+    font-size:1.2rem;font-weight:400;
+    padding:.8rem 2.5rem;
+    letter-spacing:.18em;
+    color:var(--text);
+    border:1px solid transparent;
+    border-radius:4px;
+    width:200px;text-align:center;
+  }
+  .header-nav a:hover,.header-nav a.active{color:var(--gold);border-color:var(--gold-border)}
 
-  /* Dashboard */
+  /* Mobile auth buttons inside nav */
+  .mobile-auth-row{display:flex;gap:.8rem;margin-top:.5rem}
+  .mobile-auth-row button{
+    padding:.65rem 1.6rem;border-radius:4px;
+    font-family:'Outfit',sans-serif;font-size:.85rem;
+    letter-spacing:.08em;cursor:pointer;text-transform:uppercase;
+    transition:all .2s;
+  }
+  .mobile-login-btn{background:transparent;border:1px solid var(--gold-border);color:var(--text)}
+  .mobile-login-btn:hover{border-color:var(--gold);color:var(--gold)}
+  .mobile-signup-btn{background:var(--gold);border:none;color:#07080f;font-weight:600}
+  .mobile-signup-btn:hover{background:var(--gold2)}
+  .mobile-logout-row{display:none;flex-direction:column;align-items:center;gap:.6rem;margin-top:.5rem}
+  .mobile-welcome{font-size:.9rem;color:var(--muted);font-style:italic;font-family:'Cormorant Garamond',serif}
+  .mobile-welcome span{color:var(--gold)}
+  .mobile-logout-btn{
+    padding:.55rem 1.4rem;border-radius:4px;
+    background:transparent;border:1px solid rgba(180,80,60,.4);
+    color:rgba(200,110,90,.9);
+    font-family:'Outfit',sans-serif;font-size:.78rem;
+    cursor:pointer;text-transform:uppercase;
+  }
+
+  /* Hero */
+  .hero-title{font-size:2.8rem;white-space:normal;text-align:center}
+  .hero-cta-row{flex-direction:column;align-items:center;gap:.8rem}
+  .hero-btn-primary,.hero-btn-secondary{width:260px;text-align:center}
+
+  /* Sections */
+  .section-wrap{padding:0 1.2rem}
   .dash-inner{padding:1.5rem 1rem}
   .dash-upload-center{max-width:100%}
 
-  /* About grid already handled above */
-  .section-wrap{padding:0 1.2rem}
-
-  /* Flip cards: tap to flip on mobile */
-  .flip-card{height:auto;min-height:200px}
+  /* Flip cards tap to reveal */
+  .flip-card{height:auto;min-height:180px;perspective:none}
   .flip-card-inner{transition:transform .5s}
   .flip-card.tapped .flip-card-inner{transform:rotateY(180deg)}
   .flip-hint{display:none}
-  .flip-card::after{content:'TAP TO REVEAL';font-family:'DM Mono',monospace;font-size:.52rem;color:var(--muted);letter-spacing:.2em;position:absolute;bottom:1rem;right:1.2rem;opacity:.6}
+  .flip-card::after{content:'TAP TO REVEAL';font-family:'DM Mono',monospace;font-size:.52rem;color:var(--muted);letter-spacing:.2em;position:absolute;bottom:.9rem;right:1.1rem;opacity:.6}
   .flip-card.tapped::after{display:none}
 
-  /* Pipeline steps */
-  .pipeline-steps{gap:.3rem}
-  .pipeline-step{min-width:70px;padding:1rem .8rem}
-  .pipeline-arrow{font-size:1rem;padding:0 .1rem}
+  /* Pipeline */
+  .pipeline-steps{gap:.25rem}
+  .pipeline-step{min-width:65px;padding:.9rem .6rem}
+  .pipeline-step-num{font-size:1.2rem}
+  .pipeline-arrow{font-size:.9rem;padding:0}
 
   /* Metric cards */
   .metric-row{gap:.4rem}
-  .metric-card{min-width:60px;padding:.7rem .4rem}
-  .metric-val{font-size:1.3rem}
+  .metric-card{min-width:55px;padding:.7rem .35rem}
+  .metric-val{font-size:1.2rem}
+  .metric-key{font-size:.5rem}
 }
+
 </style>
 </head>
 <body>
@@ -306,7 +344,7 @@ footer{padding:2.5rem 3rem;text-align:center;border-top:1px solid var(--gold-bor
       <button class="mobile-logout-btn" id="mobile-logout-btn" type="button">Log out</button>
     </div>
   </nav>
-  <button class="hamburger" id="hamburger" aria-label="Menu" style="display:none">
+  <button class="hamburger" id="hamburger" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
   <div id="auth-buttons" class="auth-buttons">
@@ -692,48 +730,52 @@ document.getElementById('unlock-notice-dismiss').addEventListener('click',()=>{l
   }
 
   function updateMobileAuth(){
-    const user = (() => { try { const r=localStorage.getItem('thelag_user'); return r?JSON.parse(r):null; } catch(e){return null;} })();
-    const authRow = document.getElementById('mobile-auth-row');
+    let user = null;
+    try { const r = localStorage.getItem('thelag_user'); user = r ? JSON.parse(r) : null; } catch(e){}
+    const authRow  = document.getElementById('mobile-auth-row');
     const logoutRow = document.getElementById('mobile-logout-row');
     const welcomeName = document.getElementById('mobile-welcome-name');
     if(user && user.username){
-      if(authRow) authRow.style.display = 'none';
+      if(authRow)  authRow.style.display  = 'none';
       if(logoutRow) logoutRow.style.display = 'flex';
       if(welcomeName) welcomeName.textContent = user.firstName || user.username;
     } else {
-      if(authRow) authRow.style.display = 'flex';
+      if(authRow)  authRow.style.display  = 'flex';
       if(logoutRow) logoutRow.style.display = 'none';
     }
   }
 
+  // Hamburger toggle
   hamburger.addEventListener('click', (e) => {
     e.stopPropagation();
-    nav.classList.toggle('mobile-open');
-    hamburger.classList.toggle('open');
-    if(nav.classList.contains('mobile-open')) updateMobileAuth();
+    const isOpen = nav.classList.toggle('mobile-open');
+    hamburger.classList.toggle('open', isOpen);
+    if(isOpen) updateMobileAuth();
   });
 
-  // Close nav when a link is clicked
-  nav.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', closeNav);
-  });
+  // Close when nav link clicked
+  nav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeNav));
 
-  // Close nav when tapping outside
+  // Close when tapping outside
   document.addEventListener('click', (e) => {
-    if(nav.classList.contains('mobile-open') && !nav.contains(e.target) && e.target !== hamburger){
+    if(nav.classList.contains('mobile-open') && !nav.contains(e.target) && !hamburger.contains(e.target)){
       closeNav();
     }
   });
 
-  // Mobile login/signup/logout buttons
+  // Mobile login button → opens login modal
   document.getElementById('mobile-login-btn')?.addEventListener('click', () => {
     closeNav();
-    document.getElementById('btn-login')?.click();
+    setTimeout(() => document.getElementById('btn-login')?.click(), 150);
   });
+
+  // Mobile signup button → opens signup modal
   document.getElementById('mobile-signup-btn')?.addEventListener('click', () => {
     closeNav();
-    document.getElementById('btn-signup')?.click();
+    setTimeout(() => document.getElementById('btn-signup')?.click(), 150);
   });
+
+  // Mobile logout
   document.getElementById('mobile-logout-btn')?.addEventListener('click', () => {
     closeNav();
     localStorage.removeItem('thelag_user');
@@ -750,15 +792,11 @@ document.getElementById('unlock-notice-dismiss').addEventListener('click',()=>{l
     document.body.style.cursor = 'auto';
   }
 
-  window.addEventListener('resize', () => {
-    if(!isMobile()) closeNav();
-  });
+  window.addEventListener('resize', () => { if(!isMobile()) closeNav(); });
 
   // Tap to flip cards on mobile
   document.querySelectorAll('.flip-card').forEach(card => {
-    card.addEventListener('click', () => {
-      if(isMobile()) card.classList.toggle('tapped');
-    });
+    card.addEventListener('click', () => { if(isMobile()) card.classList.toggle('tapped'); });
   });
 })();
 </script>
