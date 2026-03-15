@@ -64,6 +64,12 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class ContactRequest(BaseModel):
+    name: str
+    email: str
+    message: str
+
+
 def _hash_password(password: str) -> str:
     return hashlib.sha256(password.encode("utf-8")).hexdigest()
 
@@ -91,6 +97,15 @@ def _init_db():
                 email TEXT NOT NULL UNIQUE,
                 password_hash TEXT NOT NULL,
                 agreement INTEGER NOT NULL,
+                created_at TEXT NOT NULL
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS contact_messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL,
+                message TEXT NOT NULL,
                 created_at TEXT NOT NULL
             )
         """)
@@ -420,6 +435,39 @@ def login(req: LoginRequest):
         "message": "Logged in successfully.",
         "user": {"username": stored_username, "firstName": first_name or stored_username},
     }
+
+
+@app.post("/contact")
+def contact(req: ContactRequest):
+    """
+    Save a contact form message to SQLite (contact_messages table).
+    Returns success message; frontend shows success/error via #contact-msg.
+    """
+    name = (req.name or "").strip()
+    email = (req.email or "").strip()
+    message = (req.message or "").strip()
+    if not name:
+        raise HTTPException(status_code=400, detail="Name is required.")
+    if not email:
+        raise HTTPException(status_code=400, detail="Email is required.")
+    if not message:
+        raise HTTPException(status_code=400, detail="Message is required.")
+    created_at = datetime.utcnow().isoformat() + "Z"
+    conn = _get_db_connection()
+    try:
+        conn.execute(
+            "INSERT INTO contact_messages (name, email, message, created_at) VALUES (?, ?, ?, ?)",
+            (name, email, message, created_at),
+        )
+        conn.commit()
+        return {"status": "ok", "message": "Message sent."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        try:
+            conn.close()
+        except Exception:
+            pass
 
 
 if __name__ == "__main__":

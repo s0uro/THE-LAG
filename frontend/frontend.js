@@ -501,6 +501,62 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  document.getElementById("contact-form")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const msgEl = document.getElementById("contact-msg");
+    const btn = document.getElementById("contact-submit-btn");
+    const name = (form.querySelector("#contact-name")?.value ?? "").trim();
+    const email = (form.querySelector("#contact-email")?.value ?? "").trim();
+    const message = (form.querySelector("#contact-message")?.value ?? "").trim();
+    if (msgEl) {
+      msgEl.textContent = "";
+      msgEl.classList.remove("contact-msg-success", "contact-msg-error");
+    }
+    if (!name || !email || !message) {
+      if (msgEl) {
+        msgEl.textContent = "Please fill in name, email, and message.";
+        msgEl.classList.add("contact-msg-error");
+      }
+      return;
+    }
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Sending...";
+    }
+    try {
+      const resp = await fetch(API_BASE + "/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, message }),
+      });
+      const data = await resp.json().catch(() => ({}));
+      const detail = typeof data.detail === "string" ? data.detail : data.detail?.msg || data.message || "Something went wrong.";
+      if (!resp.ok) {
+        if (msgEl) {
+          msgEl.textContent = detail;
+          msgEl.classList.add("contact-msg-error");
+        }
+        return;
+      }
+      if (msgEl) {
+        msgEl.textContent = "Message sent — thank you!";
+        msgEl.classList.add("contact-msg-success");
+      }
+      form.reset();
+    } catch (err) {
+      if (msgEl) {
+        msgEl.textContent = "Error: " + (err.message || "Network error");
+        msgEl.classList.add("contact-msg-error");
+      }
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "Send Message";
+      }
+    }
+  });
+
   // Pop out sections when scrolling down from hero
   const revealEls = document.querySelectorAll(".reveal");
   if (revealEls.length > 0 && "IntersectionObserver" in window) {
