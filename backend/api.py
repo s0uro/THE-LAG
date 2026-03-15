@@ -292,11 +292,14 @@ def upload_and_run(file: UploadFile = File(...)):
 
     for cmd in commands:
         try:
-            # Δεν κάνουμε text/capture_output για να μην έχουμε UnicodeDecodeError
-            subprocess.run(
+            result = subprocess.run(
                 cmd,
                 cwd=str(BASE_DIR),
                 check=True,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
             )
         except subprocess.CalledProcessError as exc:
             raise HTTPException(
@@ -304,6 +307,8 @@ def upload_and_run(file: UploadFile = File(...)):
                 detail={
                     "message": f"Αποτυχία εντολής: {' '.join(cmd)}",
                     "returncode": exc.returncode,
+                    "error": exc.stderr[-2000:] if exc.stderr else "No error output",
+                    "stdout": exc.stdout[-1000:] if exc.stdout else "",
                 },
             )
 
