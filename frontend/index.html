@@ -671,6 +671,12 @@ footer{padding:2.5rem 3rem;text-align:center;border-top:1px solid var(--gold-bor
 <style>.consent-bar[data-hidden="true"]{display:none!important}</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
+// Auto-detect API base: use same origin on Railway, localhost for local dev
+window.API_BASE_OVERRIDE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') 
+  ? 'http://localhost:8000' 
+  : '';
+</script>
+<script>
 if(history.scrollRestoration)history.scrollRestoration='manual';
 
 /* CURSOR */
@@ -768,7 +774,7 @@ const DKEY='thelag-unlock-notice-dismissed',un=document.getElementById('unlock-n
 window.addEventListener('scroll',()=>{if(window.scrollY>120&&localStorage.getItem(DKEY)!=='true')un.classList.add('visible');else un.classList.remove('visible')},{passive:true});
 document.getElementById('unlock-notice-dismiss').addEventListener('click',()=>{localStorage.setItem(DKEY,'true');un.classList.remove('visible')});
 </script>
-<script src="frontend.js"></script>
+<script src="/static/frontend.js"></script>
 <script>
 /* ===== MOBILE JS ===== */
 (function(){

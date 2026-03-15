@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8000";
+const API_BASE = (typeof window.API_BASE_OVERRIDE !== "undefined") ? window.API_BASE_OVERRIDE : "http://localhost:8000";
 const USER_STORAGE_KEY = "thelag_user";
 
 function getStoredUser() {
