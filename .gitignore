@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.env
+venv/
+
+data.xlsx
+data.csv
+backend/data_clean.csv
+
+thelag.db
+thelag.db-shm
+thelag.db-wal
+
+shap_summary.png
+shap_dependence_*.png
+metrics.json
+lag_stats.json
