@@ -23,14 +23,30 @@ function updateHeaderForUser() {
   const headerLogoutWrap = document.getElementById("header-logout-wrap");
   const headerWelcomeName = document.getElementById("header-welcome-name");
   const user = getStoredUser();
+
+  // Desktop
   if (user && user.username) {
     if (authButtons) authButtons.style.display = "none";
     if (headerLogoutWrap) headerLogoutWrap.style.display = "flex";
-    if (headerWelcomeName) headerWelcomeName.textContent = user.username;
+    if (headerWelcomeName) headerWelcomeName.textContent = user.firstName || user.username;
   } else {
     if (authButtons) authButtons.style.display = "flex";
     if (headerLogoutWrap) headerLogoutWrap.style.display = "none";
     if (headerWelcomeName) headerWelcomeName.textContent = "";
+  }
+
+  // Mobile drawer
+  const mobileAuthRow   = document.getElementById("mobile-auth-row");
+  const mobileLogoutRow = document.getElementById("mobile-logout-row");
+  const mobileWelcome   = document.getElementById("mobile-welcome-name");
+  if (user && user.username) {
+    if (mobileAuthRow)   mobileAuthRow.style.display   = "none";
+    if (mobileLogoutRow) mobileLogoutRow.style.display  = "flex";
+    if (mobileWelcome)   mobileWelcome.textContent       = user.firstName || user.username;
+  } else {
+    if (mobileAuthRow)   mobileAuthRow.style.display   = "flex";
+    if (mobileLogoutRow) mobileLogoutRow.style.display  = "none";
+    if (mobileWelcome)   mobileWelcome.textContent       = "";
   }
 }
 
@@ -88,42 +104,6 @@ function loadShapImage() {
     const placeholder = img.closest(".shap-frame")?.querySelector(".shap-placeholder");
     if (placeholder) placeholder.remove();
   };
-}
-
-function clearGeneratedResults() {
-  const set = (id, val) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = val ?? "—";
-  };
-  ["xgb-acc", "xgb-f1", "xgb-r2", "mlp-acc", "mlp-f1", "mlp-r2"].forEach(id => set(id, "—"));
-  const img = document.getElementById("shap-img");
-  if (img) {
-    img.removeAttribute("src");
-    img.style.display = "none";
-    const frame = img.closest(".shap-frame");
-    if (frame) {
-      const placeholder = frame.querySelector(".shap-placeholder");
-      if (!placeholder) {
-        const p = document.createElement("p");
-        p.className = "shap-placeholder";
-        p.style.cssText = "text-align:center;padding:2rem;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted)";
-        p.textContent = "Run the pipeline to generate the SHAP plot";
-        frame.appendChild(p);
-      }
-    }
-  }
-  const statusDiv = document.getElementById("upload-status");
-  if (statusDiv) statusDiv.textContent = "";
-  const uploadZoneWrap = document.getElementById("upload-zone-wrap");
-  const uploadedFileDisplay = document.getElementById("uploaded-file-display");
-  const uploadedFileName = document.getElementById("uploaded-file-name");
-  const mainFileInput = document.getElementById("file-input");
-  const selectedFilename = document.getElementById("selected-filename");
-  if (mainFileInput) mainFileInput.value = "";
-  if (selectedFilename) selectedFilename.textContent = "";
-  if (uploadedFileName) uploadedFileName.textContent = "";
-  if (uploadZoneWrap) uploadZoneWrap.classList.remove("hidden");
-  if (uploadedFileDisplay) uploadedFileDisplay.classList.remove("visible");
 }
 
 async function uploadAndRun(optionalFileInput) {
@@ -299,7 +279,6 @@ window.addEventListener("DOMContentLoaded", () => {
   updateHeaderForUser();
 
   document.getElementById("load-metrics-btn")?.addEventListener("click", loadMetrics);
-  document.getElementById("clear-results-btn")?.addEventListener("click", clearGeneratedResults);
   document.getElementById("upload-btn")?.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -497,62 +476,6 @@ window.addEventListener("DOMContentLoaded", () => {
       if (btn) {
         btn.disabled = false;
         btn.textContent = "Log in";
-      }
-    }
-  });
-
-  document.getElementById("contact-form")?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const msgEl = document.getElementById("contact-msg");
-    const btn = document.getElementById("contact-submit-btn");
-    const name = (form.querySelector("#contact-name")?.value ?? "").trim();
-    const email = (form.querySelector("#contact-email")?.value ?? "").trim();
-    const message = (form.querySelector("#contact-message")?.value ?? "").trim();
-    if (msgEl) {
-      msgEl.textContent = "";
-      msgEl.classList.remove("contact-msg-success", "contact-msg-error");
-    }
-    if (!name || !email || !message) {
-      if (msgEl) {
-        msgEl.textContent = "Please fill in name, email, and message.";
-        msgEl.classList.add("contact-msg-error");
-      }
-      return;
-    }
-    if (btn) {
-      btn.disabled = true;
-      btn.textContent = "Sending...";
-    }
-    try {
-      const resp = await fetch(API_BASE + "/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, message }),
-      });
-      const data = await resp.json().catch(() => ({}));
-      const detail = typeof data.detail === "string" ? data.detail : data.detail?.msg || data.message || "Something went wrong.";
-      if (!resp.ok) {
-        if (msgEl) {
-          msgEl.textContent = detail;
-          msgEl.classList.add("contact-msg-error");
-        }
-        return;
-      }
-      if (msgEl) {
-        msgEl.textContent = "Message sent — thank you!";
-        msgEl.classList.add("contact-msg-success");
-      }
-      form.reset();
-    } catch (err) {
-      if (msgEl) {
-        msgEl.textContent = "Error: " + (err.message || "Network error");
-        msgEl.classList.add("contact-msg-error");
-      }
-    } finally {
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = "Send Message";
       }
     }
   });
