@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Any, Dict, Optional
 import hashlib
@@ -285,6 +286,10 @@ def upload_and_run(file: UploadFile = File(...)):
     finally:
         file.file.close()
 
+    # Pass the saved file path so preprocessing finds it regardless of cwd (e.g. on server)
+    env = os.environ.copy()
+    env["THELAG_RAW_FILE"] = str(target_path)
+
     # Τρέχουμε τη pipeline με subprocess, με cwd=BASE_DIR
     commands = [
         [sys.executable, "backend/preprocessing.py"],
@@ -298,6 +303,7 @@ def upload_and_run(file: UploadFile = File(...)):
             result = subprocess.run(
                 cmd,
                 cwd=str(BASE_DIR),
+                env=env,
                 check=True,
                 capture_output=True,
                 text=True,

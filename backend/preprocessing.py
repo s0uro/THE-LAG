@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 from pathlib import Path
@@ -5,10 +6,17 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 # === ΡΥΘΜΙΣΕΙΣ / ΟΝΟΜΑΤΑ ΣΤΗΛΩΝ ===
-# Διαβάζουμε το βασικό αρχείο `data.xlsx` από το root του project.
-# Αν θέλεις άλλο path, άλλαξέ το εδώ.
-RAW_FILE = "data.xlsx"  # ή "data.csv" αν έχεις CSV
-OUTPUT_FILE = "backend/data_clean.csv"
+# Project root (parent of backend/). Paths resolved from here so they work when cwd differs (e.g. on server).
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+# Raw file: use env THELAG_RAW_FILE if set (upload-and-run passes this), else data.xlsx / data.csv in project root.
+_raw_env = os.environ.get("THELAG_RAW_FILE")
+if _raw_env:
+    RAW_FILE = _raw_env
+else:
+    _xlsx = _PROJECT_ROOT / "data.xlsx"
+    _csv = _PROJECT_ROOT / "data.csv"
+    RAW_FILE = str(_xlsx) if _xlsx.exists() else str(_csv)
+OUTPUT_FILE = str(_PROJECT_ROOT / "backend" / "data_clean.csv")
 
 # Ονόματα στηλών (προσάρμοσέ τα αν διαφέρουν)
 # Στο δικό σου αρχείο ΔΕΝ υπάρχουν Finger_Time/Eye_Time. Συνήθως υπάρχει ήδη διαφορά χρόνου ως `dt`.
