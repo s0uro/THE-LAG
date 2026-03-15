@@ -181,22 +181,25 @@ def predict(req: PredictRequest):
         raise HTTPException(status_code=400, detail="Λείπουν features στο request.")
 
     xgb_model, mlp_model, expected_columns = _load_models_and_info()
+    assert xgb_model is not None and mlp_model is not None
+    cols_list: list[str] = list(expected_columns) if expected_columns else []
 
     # Φτιάχνουμε DataFrame με ένα μόνο row
     df = pd.DataFrame([req.features])
 
     # Προσθέτουμε όποιες στήλες λείπουν, με default 0
-    for col in expected_columns:
+    for col in cols_list:
         if col not in df.columns:
             df[col] = 0
 
     # Κρατάμε μόνο τις στήλες που περιμένουν τα μοντέλα, με σωστή σειρά
-    df = df[expected_columns]
+    df = df[cols_list]
 
     # Ασφάλεια: μετατροπή αντικειμένων σε κατηγορικά codes όπως στο training
     for col in df.columns:
-        if df[col].dtype == "object":
-            df[col] = df[col].astype("category").cat.codes
+        ser = pd.Series(df[col], index=df.index)
+        if ser.dtype == "object":
+            df[col] = ser.astype("category").cat.codes
 
     df = df.fillna(0)
 

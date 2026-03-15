@@ -59,7 +59,7 @@ def get_feature_target(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
 
         if df[col].dtype == "object":
             numeric = pd.to_numeric(df[col], errors="coerce")
-            non_na_ratio = numeric.notna().mean()
+            non_na_ratio = float(pd.Series(numeric).notna().mean())
             if non_na_ratio > 0.5:
                 df[col] = numeric
             else:
@@ -81,7 +81,7 @@ def get_feature_target(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
         if X[col].dtype == "object":
             X[col] = X[col].astype("category").cat.codes
 
-    y = df[TARGET_COL]
+    y: pd.Series = pd.Series(df[TARGET_COL])
     return X, y
 
 
@@ -112,19 +112,19 @@ def main() -> None:
     y_pred_xgb = xgb_model.predict(X_test)
     acc_xgb = accuracy_score(y_test, y_pred_xgb)
     # zero_division=0 για να μη βγάζει UndefinedMetricWarning όταν δεν υπάρχουν θετικές προβλέψεις
-    f1_xgb = f1_score(y_test, y_pred_xgb, zero_division=0)
+    f1_xgb = f1_score(y_test, y_pred_xgb, zero_division=0)  # type: ignore[arg-type]
     report_xgb = classification_report(
         y_test,
         y_pred_xgb,
         output_dict=True,
-        zero_division=0,
+        zero_division=0,  # type: ignore[arg-type]
     )
     cm_xgb = confusion_matrix(y_test, y_pred_xgb).tolist()
 
     print(f"Accuracy: {acc_xgb:.4f}")
     print(f"F1-Score: {f1_xgb:.4f}")
     print("Classification report:")
-    print(classification_report(y_test, y_pred_xgb, digits=4, zero_division=0))
+    print(classification_report(y_test, y_pred_xgb, digits=4, zero_division=0))  # type: ignore[arg-type]
     print("Confusion matrix:")
     print(confusion_matrix(y_test, y_pred_xgb))
 
@@ -133,19 +133,19 @@ def main() -> None:
     y_pred_mlp = mlp_model.predict(X_test)
     acc_mlp = accuracy_score(y_test, y_pred_mlp)
     # zero_division=0 για να μη βγάζει UndefinedMetricWarning όταν δεν υπάρχουν θετικές προβλέψεις
-    f1_mlp = f1_score(y_test, y_pred_mlp, zero_division=0)
+    f1_mlp = f1_score(y_test, y_pred_mlp, zero_division=0)  # type: ignore[arg-type]
     report_mlp = classification_report(
         y_test,
         y_pred_mlp,
         output_dict=True,
-        zero_division=0,
+        zero_division=0,  # type: ignore[arg-type]
     )
     cm_mlp = confusion_matrix(y_test, y_pred_mlp).tolist()
 
     print(f"Accuracy: {acc_mlp:.4f}")
     print(f"F1-Score: {f1_mlp:.4f}")
     print("Classification report:")
-    print(classification_report(y_test, y_pred_mlp, digits=4, zero_division=0))
+    print(classification_report(y_test, y_pred_mlp, digits=4, zero_division=0))  # type: ignore[arg-type]
     print("Confusion matrix:")
     print(confusion_matrix(y_test, y_pred_mlp))
 

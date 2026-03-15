@@ -58,7 +58,7 @@ def get_feature_target(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
 
         if df[col].dtype == "object":
             numeric = pd.to_numeric(df[col], errors="coerce")
-            non_na_ratio = numeric.notna().mean()
+            non_na_ratio = float(pd.Series(numeric).notna().mean())
             if non_na_ratio > 0.5:
                 df[col] = numeric
             else:
@@ -80,7 +80,7 @@ def get_feature_target(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
         if X[col].dtype == "object":
             X[col] = X[col].astype("category").cat.codes
 
-    y = df[TARGET_COL]
+    y: pd.Series = pd.Series(df[TARGET_COL], index=df.index)
     return X, y
 
 
@@ -105,7 +105,8 @@ def main() -> None:
     )
 
     # Για SHAP, χρησιμοποιούμε ένα υποσύνολο για να είναι πιο γρήγορο
-    background = X_train.sample(min(200, len(X_train)), random_state=42)
+    X_train_df = pd.DataFrame(X_train) if not isinstance(X_train, pd.DataFrame) else X_train
+    background = X_train_df.sample(min(200, len(X_train_df)), random_state=42)
 
     print("Δημιουργία SHAP TreeExplainer για XGBoost...")
     explainer = shap.TreeExplainer(xgb_model)

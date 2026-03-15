@@ -53,7 +53,7 @@ def get_feature_target(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
             continue
         if df[col].dtype == "object" or str(df[col].dtype) == "string":
             numeric = pd.to_numeric(df[col], errors="coerce")
-            non_na_ratio = numeric.notna().mean()
+            non_na_ratio = float(pd.Series(numeric).notna().mean())
             if non_na_ratio > 0.5:
                 df[col] = numeric
             else:
@@ -78,7 +78,7 @@ def get_feature_target(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
         if X[col].dtype == "object":
             X[col] = X[col].astype("category").cat.codes
 
-    y = df[TARGET_COL]
+    y: pd.Series = pd.Series(df[TARGET_COL], dtype=df[TARGET_COL].dtype)
     return X, y
 
 
@@ -123,7 +123,7 @@ def main() -> None:
         activation="relu",
         solver="adam",
         alpha=1e-4,
-        batch_size=64,
+        batch_size=64,  # type: ignore[arg-type]
         learning_rate_init=1e-3,
         max_iter=200,
         random_state=42,
