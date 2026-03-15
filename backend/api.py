@@ -1,4 +1,7 @@
 import os
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from pathlib import Path
 from typing import Any, Dict, Optional
 import hashlib
@@ -437,6 +440,56 @@ def login(req: LoginRequest):
     }
 
 
+def _ensure_contact_table(conn):
+    """Create contact_messages table if it does not exist (e.g. DB created before this feature)."""
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS contact_messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL,
+            message TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        )
+    """)
+    conn.commit()
+
+
+def _send_contact_email(name: str, visitor_email: str, message: str) -> None:
+    """
+    Send you an email when someone submits the contact form.
+    Set env: CONTACT_EMAIL_TO (your email), SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD.
+    """
+    to_email = os.environ.get("CONTACT_EMAIL_TO", "").strip()
+    if not to_email:
+        return
+    smtp_host = os.environ.get("SMTP_HOST", "smtp.gmail.com").strip()
+    smtp_port = int(os.environ.get("SMTP_PORT", "587"))
+    smtp_user = os.environ.get("SMTP_USER", "").strip()
+    smtp_password = os.environ.get("SMTP_PASSWORD", "").strip()
+    if not smtp_user or not smtp_password:
+        raise RuntimeError(
+            "Email not configured: set SMTP_USER and SMTP_PASSWORD (and optionally SMTP_HOST, SMTP_PORT, CONTACT_EMAIL_TO)."
+        )
+    subject = f"[THE-LAG] Contact from {name}"
+    body = f"""Someone sent a message from the contact form.
+
+Name: {name}
+Email: {visitor_email}
+
+Message:
+{message}
+"""
+    msg = MIMEMultipart()
+    msg["From"] = smtp_user
+    msg["To"] = to_email
+    msg["Subject"] = subject
+    msg.attach(MIMEText(body, "plain", "utf-8"))
+    with smtplib.SMTP(smtp_host, smtp_port) as server:
+        server.starttls()
+        server.login(smtp_user, smtp_password)
+        server.sendmail(smtp_user, to_email, msg.as_string())
+
+
 @app.post("/contact")
 def contact(req: ContactRequest):
     """
@@ -455,12 +508,12 @@ def contact(req: ContactRequest):
     created_at = datetime.utcnow().isoformat() + "Z"
     conn = _get_db_connection()
     try:
+        _ensure_contact_table(conn)
         conn.execute(
             "INSERT INTO contact_messages (name, email, message, created_at) VALUES (?, ?, ?, ?)",
             (name, email, message, created_at),
         )
         conn.commit()
-        return {"status": "ok", "message": "Message sent."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -468,6 +521,18 @@ def contact(req: ContactRequest):
             conn.close()
         except Exception:
             pass
+
+    # Send you an email if env vars are set
+    if os.environ.get("CONTACT_EMAIL_TO"):
+        try:
+            _send_contact_email(name, email, message)
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail="Message was saved but email notification failed. Check server SMTP settings.",
+            )
+
+    return {"status": "ok", "message": "Message sent."}
 
 
 if __name__ == "__main__":

@@ -95,6 +95,37 @@
 Προϋπόθεση: να τρέχει το API από το ΒΗΜΑ 6.
 
 
+ΒΗΜΑ 8 (Προαιρετικό): Email όταν κάποιος σου στέλνει μήνυμα από το Contact
+--------------------------------------------------------------------------------
+Όταν κάποιος συμπληρώνει τη φόρμα "Contact" και πατάει Send Message,
+το μήνυμα αποθηκεύεται στη βάση (contact_messages). Αν θέλεις να σου
+στέλνεται και email ειδοποίηση, πάρε τις τιμές από τον πάροχο email σου
+(Gmail, Outlook, κ.λπ.) και όρισε μεταβλητές περιβάλλοντος πριν τρέξεις το API.
+
+Παράδειγμα για Yahoo (χρησιμοποίησε App Password από Yahoo Account Security):
+
+   $env:CONTACT_EMAIL_TO="contact.thelag357@yahoo.com"
+   $env:SMTP_HOST="smtp.mail.yahoo.com"
+   $env:SMTP_PORT="587"
+   $env:SMTP_USER="contact.thelag357@yahoo.com"
+   $env:SMTP_PASSWORD="your-yahoo-app-password"
+   uvicorn backend.api:app --host 0.0.0.0 --port 8000 --reload
+
+Yahoo συχνά δεν δίνει App Passwords. Για να λαμβάνεις στο contact.thelag357@yahoo.com,
+χρησιμοποίησε SendGrid (δωρεάν):
+
+   $env:CONTACT_EMAIL_TO="contact.thelag357@yahoo.com"
+   $env:SMTP_HOST="smtp.sendgrid.net"
+   $env:SMTP_PORT="587"
+   $env:SMTP_USER="apikey"
+   $env:SMTP_PASSWORD="SG.xxxx-your-sendgrid-api-key"
+   uvicorn backend.api:app --host 0.0.0.0 --port 8000 --reload
+
+Δημιούργησε API key από sendgrid.com (Settings → API Keys). Επίσης κάνε verify
+έναν sender (Settings → Sender Authentication). Αλλιώς χρησιμοποίησε Gmail
+με App Password και CONTACT_EMAIL_TO=contact.thelag357@yahoo.com για να λαμβάνεις εκεί.
+
+
 ΓΕΝΙΚΕΣ ΣΗΜΕΙΩΣΕΙΣ
 -----------------
 - Τα scripts πρέπει να τρέχουν ΠΑΝΤΑ από τον φάκελο:
