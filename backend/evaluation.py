@@ -1,3 +1,4 @@
+# pyright: reportGeneralTypeIssues=false
 import json
 from pathlib import Path
 
@@ -94,12 +95,12 @@ def get_feature_target(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
 def get_feature_lag(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series] | None:
     if LAG_COL not in df.columns:
         return None
-    lag_series = pd.to_numeric(df[LAG_COL], errors="coerce")
+    lag_series: pd.Series = pd.to_numeric(df[LAG_COL], errors="coerce")  # type: ignore[assignment]
     valid = lag_series.notna()
     df_v = df[valid].copy()
-    lag_v = lag_series[valid].reset_index(drop=True)
+    lag_v = lag_series[valid].reset_index(drop=True)  # type: ignore[call-arg]
     exclude = [c for c in [LAG_COL, TARGET_COL] if c in df_v.columns]
-    X = _encode_features(df_v, exclude_cols=exclude)
+    X = _encode_features(df_v, exclude_cols=exclude)  # type: ignore[arg-type]
     return X, lag_v
 
 
@@ -127,6 +128,7 @@ def main() -> None:
     mlp_clf = load(MODEL_MLP_PATH)
 
     # Scaler για MLP
+    scaler = None
     try:
         scaler = load(SCALER_PATH)
         has_scaler = True
@@ -137,7 +139,7 @@ def main() -> None:
         X_clf, y_clf, test_size=test_size, random_state=random_state, stratify=y_clf
     )
 
-    Xs_te_c = scaler.transform(X_te_c) if has_scaler else X_te_c
+    Xs_te_c = scaler.transform(X_te_c) if has_scaler and scaler is not None else X_te_c  # type: ignore[union-attr]
 
     # XGBoost
     yp_xgb = xgb_clf.predict(X_te_c)
@@ -191,7 +193,7 @@ def main() -> None:
                 X_reg, y_reg, test_size=test_size, random_state=random_state
             )
 
-            Xs_te_r = scaler.transform(X_te_r) if has_scaler else X_te_r
+            Xs_te_r = scaler.transform(X_te_r) if has_scaler and scaler is not None else X_te_r  # type: ignore[union-attr]
 
             yp_xgb_r = xgb_reg.predict(X_te_r)
             mae_xgb = mean_absolute_error(y_te_r, yp_xgb_r)

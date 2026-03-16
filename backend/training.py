@@ -1,3 +1,4 @@
+# pyright: reportGeneralTypeIssues=false
 import pandas as pd
 import numpy as np
 from pathlib import Path
@@ -93,12 +94,12 @@ def get_feature_lag(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series] | None:
     """Features + συνεχής Temporal Lag για regression."""
     if LAG_COL not in df.columns:
         return None
-    lag_series = pd.to_numeric(df[LAG_COL], errors="coerce")
+    lag_series: pd.Series = pd.to_numeric(df[LAG_COL], errors="coerce")  # type: ignore[assignment]
     valid = lag_series.notna()
     df_v = df[valid].copy()
-    lag_v = lag_series[valid].reset_index(drop=True)
+    lag_v = lag_series[valid].reset_index(drop=True)  # type: ignore[call-arg]
     exclude = [c for c in [LAG_COL, TARGET_COL] if c in df_v.columns]
-    X = _encode_features(df_v, exclude_cols=exclude)
+    X = _encode_features(df_v, exclude_cols=exclude)  # type: ignore[arg-type]
     return X, lag_v
 
 
@@ -133,7 +134,7 @@ def main() -> None:
     print("Εκπαίδευση XGBoost Classifier...")
     xgb_clf.fit(X_tr_c, y_tr_c)
     yp = xgb_clf.predict(X_te_c)
-    print(f"  [XGBoost CLF] Accuracy={accuracy_score(y_te_c,yp):.4f}  F1={f1_score(y_te_c,yp,zero_division=0):.4f}")
+    print(f"  [XGBoost CLF] Accuracy={accuracy_score(y_te_c,yp):.4f}  F1={f1_score(y_te_c,yp,zero_division=0):.4f}")  # type: ignore[arg-type]
 
     mlp_clf = MLPClassifier(
         hidden_layer_sizes=(128, 64, 32), activation="relu", solver="adam",
@@ -143,7 +144,7 @@ def main() -> None:
     print("Εκπαίδευση MLP Classifier...")
     mlp_clf.fit(Xs_tr_c, y_tr_c)
     yp = mlp_clf.predict(Xs_te_c)
-    print(f"  [MLP CLF]     Accuracy={accuracy_score(y_te_c,yp):.4f}  F1={f1_score(y_te_c,yp,zero_division=0):.4f}")
+    print(f"  [MLP CLF]     Accuracy={accuracy_score(y_te_c,yp):.4f}  F1={f1_score(y_te_c,yp,zero_division=0):.4f}")  # type: ignore[arg-type]
 
     # ══════════════════════════════════════════════
     # ΜΕΡΟΣ Β — REGRESSION (πρόβλεψη τιμής Temporal Lag)

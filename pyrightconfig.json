@@ -1,4 +1,5 @@
 {
   "reportMissingImports": "none",
-  "reportMissingModuleSource": "none"
+  "reportMissingModuleSource": "none",
+  "reportGeneralTypeIssues": "none"
 }

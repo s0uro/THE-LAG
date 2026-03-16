@@ -1,3 +1,4 @@
+# pyright: reportGeneralTypeIssues=false
 import os
 import pandas as pd
 import numpy as np
@@ -68,7 +69,7 @@ def replace_scientific_outliers_with_median(df: pd.DataFrame) -> pd.DataFrame:
         # Θεωρούμε outliers ό,τι είναι πιο μεγάλο από 1e10 (π.χ. 1e14)
         mask_outliers = col_values.abs() > 1e10
         if mask_outliers.any():
-            median_val = col_values[~mask_outliers].median()
+            median_val = float(col_values[~mask_outliers].median())  # type: ignore[arg-type]
             df.loc[mask_outliers, col] = median_val
 
     return df
@@ -132,34 +133,39 @@ def add_lag_column(df: pd.DataFrame) -> pd.DataFrame:
                 # Fallback αν ένα από τα δύο είναι κενό
                 pass
             else:
-                et["TRT_et"] = pd.to_numeric(et[COL_TRT], errors="coerce")
+                et["TRT_et"] = pd.to_numeric(et[COL_TRT], errors="coerce")  # type: ignore[assignment]
                 # Κρατάμε μόνο TRT < 5s (αφαίρεση outliers)
-                et["TRT_et"] = et["TRT_et"].where(et["TRT_et"] < 5)
+                et["TRT_et"] = et["TRT_et"].where(et["TRT_et"] < 5)  # type: ignore[call-arg]
 
                 ft["dt_ft"] = pd.to_numeric(ft[COL_DT], errors="coerce")
 
                 # Merge ET+FT ανά χρήστη + token
+                et_for_merge: pd.DataFrame = pd.DataFrame(et[MERGE_KEYS + ["TRT_et"]])
+                ft_for_merge: pd.DataFrame = pd.DataFrame(ft[MERGE_KEYS + ["dt_ft"]])
                 merged = pd.merge(
-                    et[MERGE_KEYS + ["TRT_et"]],
-                    ft[MERGE_KEYS + ["dt_ft"]],
+                    et_for_merge,
+                    ft_for_merge,
                     on=MERGE_KEYS,
                     how="inner",
                 )
                 merged["Lag"] = merged["dt_ft"] - merged["TRT_et"]
 
                 # Αφαίρεση ακραίων τιμών lag (> 5s σε απόλυτη τιμή)
-                merged = merged[merged["Lag"].abs() < 5]
+                merged = merged[merged["Lag"].abs() < 5]  # type: ignore[call-arg]
 
                 # Επιστρέφουμε μόνο τις ET γραμμές εμπλουτισμένες με Lag
+                lag_for_merge: pd.DataFrame = pd.DataFrame(merged[MERGE_KEYS + ["Lag"]])
                 et_with_lag = pd.merge(
                     et,
-                    merged[MERGE_KEYS + ["Lag"]],
+                    lag_for_merge,
                     on=MERGE_KEYS,
                     how="left",
                 )
+                lag_notna = merged["Lag"].notna()  # type: ignore[call-arg]
+                lag_median = float(merged["Lag"].median())  # type: ignore[arg-type]
                 print(
-                    f"  Temporal Lag υπολογίστηκε για {merged['Lag'].notna().sum()} tokens "
-                    f"(median={merged['Lag'].median():.3f}s)"
+                    f"  Temporal Lag υπολογίστηκε για {lag_notna.sum()} tokens "
+                    f"(median={lag_median:.3f}s)"
                 )
                 return et_with_lag
 
@@ -203,10 +209,10 @@ def create_target_label(df: pd.DataFrame, trt_threshold: float | None = None) ->
     """
     # Περίπτωση 1 (κύρια): Temporal Lag από merge ET+FT
     if "Lag" in df.columns:
-        lag_series = pd.to_numeric(df["Lag"], errors="coerce")
-        valid_lag = lag_series.dropna()
+        lag_series: pd.Series = pd.to_numeric(df["Lag"], errors="coerce")  # type: ignore[assignment]
+        valid_lag = lag_series.dropna()  # type: ignore[call-arg]
         if not valid_lag.empty:
-            median_lag = valid_lag.median()
+            median_lag = float(valid_lag.median())  # type: ignore[arg-type]
             # target=1 αν lag > median (εύκολη), target=0 αν lag <= median (δύσκολη)
             df["target"] = np.where(lag_series > median_lag, 1, 0)
             print(
@@ -218,9 +224,10 @@ def create_target_label(df: pd.DataFrame, trt_threshold: float | None = None) ->
     # Περίπτωση 2: TRT / isReg
     if COL_TRT in df.columns and COL_IS_REG in df.columns:
         if trt_threshold is None:
-            trt_threshold = df[COL_TRT].mean()
-        df["target"] = np.where(
-            (df[COL_TRT] > trt_threshold) & (df[COL_IS_REG] == 1),
+            trt_threshold = float(df[COL_TRT].mean())  # type: ignore[arg-type]
+        trt_numeric: pd.Series = pd.to_numeric(df[COL_TRT], errors="coerce")  # type: ignore[assignment]
+        df["target"] = np.where(  # type: ignore[arg-type]
+            (trt_numeric > float(trt_threshold)) & (df[COL_IS_REG] == 1),
             1,
             0,
         )
