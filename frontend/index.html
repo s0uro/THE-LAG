@@ -165,7 +165,12 @@ body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{width:50px;he
 .metrics-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem}
 .metrics-title{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--gold);letter-spacing:.25em;text-transform:uppercase}
 .metrics-actions{display:flex;align-items:center;gap:.5rem}
-.load-btn,.clear-btn{padding:.38rem .95rem;background:transparent;border:1px solid var(--gold-border);border-radius:3px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.7rem;letter-spacing:.1em;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.load-btn,.clear-btn{
+  padding:.38rem .95rem;background:transparent;border:1px solid var(--gold-border);
+  border-radius:3px;color:var(--text);font-family:'Outfit',sans-serif;
+  font-size:.7rem;letter-spacing:.1em;cursor:pointer;transition:all .2s;
+  text-transform:uppercase
+}
 .load-btn:hover,.clear-btn:hover{border-color:var(--gold);color:var(--gold)}
 .clear-btn{border-color:rgba(200,169,110,.35);color:var(--muted)}
 .clear-btn:hover{border-color:rgba(180,100,80,.5);color:rgba(220,130,110,.9)}
@@ -349,7 +354,7 @@ footer{padding:2.5rem max(3rem,env(safe-area-inset-right)) max(2.5rem,env(safe-a
 
   /* Sections */
   .section-wrap{padding:0 1.2rem}
-  .dash-inner{padding:1.5rem 1rem}
+  .dash-inner{padding:1.8rem 1.2rem}
   .dash-upload-center{max-width:100%}
   .about-grid{grid-template-columns:1fr}
   .about-stats{grid-template-columns:1fr 1fr}
@@ -372,10 +377,10 @@ footer{padding:2.5rem max(3rem,env(safe-area-inset-right)) max(2.5rem,env(safe-a
   .pipeline-arrow{font-size:.9rem;padding:0}
 
   /* Metrics */
-  .metric-row{gap:.4rem}
-  .metric-card{min-width:55px;padding:.7rem .35rem}
-  .metric-val{font-size:1.2rem}
-  .metric-key{font-size:.5rem}
+  .metric-row{gap:.5rem}
+  .metric-card{min-width:72px;padding:.8rem .5rem}
+  .metric-val{font-size:1.25rem}
+  .metric-key{font-size:.52rem}
 
   /* Contact */
   .contact-card{padding:1.5rem 1rem}
@@ -619,13 +624,13 @@ footer{padding:2.5rem max(3rem,env(safe-area-inset-right)) max(2.5rem,env(safe-a
   <div class="section-wrap dashboard-section reveal" id="dashboard">
     <div class="dash-inner">
       <div class="dash-header">
-        <span class="section-label">Experiment run</span>
-        <p class="dash-h2">Metrics &amp; SHAP Analysis</p>
-        <p>Upload a lab session dataset. The backend will execute the full pipeline and return model performance metrics and SHAP explainability plots.</p>
+        <span class="section-label">Analyse data</span>
+        <p class="dash-h2">Upload, evaluate &amp; explain</p>
+        <p>Upload a reading experiment dataset (Excel or CSV) and run the full XGBoost/MLP pipeline. Below you will see classification metrics for both models and a SHAP plot that explains which features drive difficulty.</p>
       </div>
       <div class="dash-body">
         <div class="dash-upload-center" id="upload">
-          <span class="panel-label" style="text-align:center">Dataset Upload</span>
+          <span class="panel-label" style="text-align:center">Upload dataset (.xlsx / .csv)</span>
           <!-- Hidden file input — triggered only by the label below, never overlaps the Run button -->
           <input id="file-input" type="file" accept=".xlsx,.csv" style="display:none"/>
           <div class="upload-zone-wrap" id="upload-zone-wrap">
@@ -648,6 +653,9 @@ footer{padding:2.5rem max(3rem,env(safe-area-inset-right)) max(2.5rem,env(safe-a
           </div>
           <span id="selected-filename"></span>
           <button type="button" id="upload-btn" class="run-btn">Run Full Pipeline</button>
+          <p style="margin-top:.4rem;font-size:.75rem;color:var(--muted);line-height:1.6;text-align:center">
+            This will preprocess your file, train/evaluate the XGBoost &amp; MLP models and refresh the metrics and SHAP plot below.
+          </p>
           <div id="upload-status"></div>
           <div id="pipeline-steps-status" style="display:none;margin-top:.8rem">
             <div style="display:flex;flex-direction:column;gap:.4rem">
@@ -661,7 +669,7 @@ footer{padding:2.5rem max(3rem,env(safe-area-inset-right)) max(2.5rem,env(safe-a
         <div class="gold-divider"></div>
         <div class="dash-metrics-wrap" id="metrics">
           <div class="metrics-header">
-            <span class="metrics-title">Model Metrics</span>
+            <span class="metrics-title">Model metrics</span>
             <div class="metrics-actions">
               <button id="load-metrics-btn" class="load-btn">Load</button>
               <button type="button" id="clear-results-btn" class="clear-btn">Clear results</button>
@@ -669,7 +677,7 @@ footer{padding:2.5rem max(3rem,env(safe-area-inset-right)) max(2.5rem,env(safe-a
           </div>
           <div class="metric-cards" id="metric-cards">
             <div class="metric-model-group" id="metric-xgb">
-              <span class="metric-model-label">XGBoost</span>
+              <span class="metric-model-label">XGBoost (classification)</span>
               <div class="metric-row">
                 <div class="metric-card"><div class="metric-val" id="xgb-acc">—</div><div class="metric-key">Accuracy</div></div>
                 <div class="metric-card"><div class="metric-val" id="xgb-f1">—</div><div class="metric-key">F1 Score</div></div>
@@ -677,7 +685,7 @@ footer{padding:2.5rem max(3rem,env(safe-area-inset-right)) max(2.5rem,env(safe-a
               </div>
             </div>
             <div class="metric-model-group" id="metric-mlp">
-              <span class="metric-model-label">MLP</span>
+              <span class="metric-model-label">MLP (classification)</span>
               <div class="metric-row">
                 <div class="metric-card"><div class="metric-val" id="mlp-acc">—</div><div class="metric-key">Accuracy</div></div>
                 <div class="metric-card"><div class="metric-val" id="mlp-f1">—</div><div class="metric-key">F1 Score</div></div>
@@ -687,8 +695,8 @@ footer{padding:2.5rem max(3rem,env(safe-area-inset-right)) max(2.5rem,env(safe-a
           </div>
         </div>
         <div class="dash-shap-wrap" id="shap">
-          <span class="shap-label">SHAP Feature Importance</span>
-          <span class="shap-sublabel">Tree-based feature attribution · XGBoost</span>
+          <span class="shap-label">SHAP feature importance</span>
+          <span class="shap-sublabel">Global explanation of which features make tokens easier or harder to read (XGBoost model)</span>
           <div class="shap-frame">
             <img id="shap-img" alt="SHAP summary plot"/>
           </div>
