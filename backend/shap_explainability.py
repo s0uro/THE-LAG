@@ -109,6 +109,16 @@ def main() -> None:
     X_train_df = pd.DataFrame(X_train) if not isinstance(X_train, pd.DataFrame) else X_train
     background = X_train_df.sample(min(200, len(X_train_df)), random_state=42)
 
+    # Ευθυγράμμιση features με το XGBoost model (ίδια σειρά και πλήθος στηλών)
+    booster = xgb_model.get_booster()
+    feature_names = booster.feature_names
+    if feature_names is not None:
+        for col in feature_names:
+            if col not in background.columns:
+                background[col] = 0.0
+        # Αν υπάρχουν extra στήλες που δεν βλέπει το μοντέλο, τις αγνοούμε
+        background = background[feature_names]
+
     print("Δημιουργία SHAP TreeExplainer για XGBoost...")
     explainer = shap.TreeExplainer(xgb_model)
     shap_values = explainer.shap_values(background)
