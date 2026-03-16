@@ -83,6 +83,52 @@ async function loadMetrics() {
   }
 }
 
+function clearResults() {
+  // Metrics
+  ["xgb-acc", "xgb-f1", "xgb-r2", "mlp-acc", "mlp-f1", "mlp-r2"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = "—";
+  });
+
+  // Upload status + pipeline steps UI
+  const statusDiv = document.getElementById("upload-status");
+  if (statusDiv) {
+    statusDiv.textContent = "";
+    statusDiv.style.color = "";
+  }
+  const pwrap = document.getElementById("pipeline-steps-status");
+  if (pwrap) pwrap.style.display = "none";
+
+  // SHAP image + placeholder
+  const img = document.getElementById("shap-img");
+  if (img) {
+    img.removeAttribute("src");
+    img.style.display = "none";
+    const frame = img.closest(".shap-frame");
+    frame?.querySelector(".shap-placeholder")?.remove();
+    if (frame) {
+      const p = document.createElement("p");
+      p.className = "shap-placeholder";
+      p.style.cssText =
+        "text-align:center;padding:2rem;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted)";
+      p.textContent = "Run the pipeline to generate the SHAP plot";
+      frame.appendChild(p);
+    }
+  }
+
+  // Clear selected file UI (dashboard)
+  const mainFileInput = document.getElementById("file-input");
+  if (mainFileInput) mainFileInput.value = "";
+  const selEl = document.getElementById("selected-filename");
+  if (selEl) selEl.textContent = "";
+  const uploadZoneWrap = document.getElementById("upload-zone-wrap");
+  const uploadedFileDisplay = document.getElementById("uploaded-file-display");
+  const uploadedFileName = document.getElementById("uploaded-file-name");
+  uploadZoneWrap?.classList.remove("hidden");
+  uploadedFileDisplay?.classList.remove("visible");
+  if (uploadedFileName) uploadedFileName.textContent = "";
+}
+
 function loadShapImage() {
   const img = document.getElementById("shap-img");
   if (!img) return;
@@ -279,6 +325,10 @@ window.addEventListener("DOMContentLoaded", () => {
   updateHeaderForUser();
 
   document.getElementById("load-metrics-btn")?.addEventListener("click", loadMetrics);
+  document.getElementById("clear-results-btn")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    clearResults();
+  });
   document.getElementById("upload-btn")?.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
