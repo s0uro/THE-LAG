@@ -99,24 +99,76 @@ def fill_missing_ffd_fpd_trt(df: pd.DataFrame) -> pd.DataFrame:
 
 def add_lag_column(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Προσθέτει στήλη Lag = Finger_Time - Eye_Time.
+    Υπολογίζει το Temporal Lag = dt(FT) - TRT(ET) για κάθε token.
+
+    Το dataset έχει δύο τύπους γραμμών:
+      - ET (idDevice='ET'): περιέχει TRT, FFD, FPD κ.λπ.
+      - FT (idDevice=1):   περιέχει dt (χρόνος δακτύλου ανά token)
+
+    Κάνουμε merge ανά (idUser, gid, tid) και υπολογίζουμε:
+      Lag = dt_FT - TRT_ET
+
+    Θετικό lag → το δάκτυλο προηγείται (εύκολη λέξη)
+    Αρνητικό lag → το μάτι αργεί, το δάκτυλο μένει πίσω (δύσκολη λέξη)
     """
-    # Case A: Έχουμε και τις δύο στήλες finger/eye time
+    # Case A: Ρητές στήλες Finger_Time / Eye_Time
     if COL_FINGER_TIME in df.columns and COL_EYE_TIME in df.columns:
         df[COL_FINGER_TIME] = pd.to_numeric(df[COL_FINGER_TIME], errors="coerce")
         df[COL_EYE_TIME] = pd.to_numeric(df[COL_EYE_TIME], errors="coerce")
         df["Lag"] = df[COL_FINGER_TIME] - df[COL_EYE_TIME]
         return df
 
-    # Case B: Στο dataset υπάρχει ήδη dt (διαφορά χρόνου)
+    # Case B: Το dataset έχει στήλη idDevice που ξεχωρίζει ET από FT
+    # Αυτή είναι η κύρια περίπτωση για το dedomena_ptixiakis.xlsx
+    if "idDevice" in df.columns and COL_DT in df.columns and COL_TRT in df.columns:
+        MERGE_KEYS = [c for c in ["idUser", "gid", "tid"] if c in df.columns]
+
+        if len(MERGE_KEYS) >= 2:
+            # Διαχωρισμός ET και FT
+            et = df[df["idDevice"] == "ET"].copy()
+            ft = df[df["idDevice"] == 1].copy()
+
+            if et.empty or ft.empty:
+                # Fallback αν ένα από τα δύο είναι κενό
+                pass
+            else:
+                et["TRT_et"] = pd.to_numeric(et[COL_TRT], errors="coerce")
+                # Κρατάμε μόνο TRT < 5s (αφαίρεση outliers)
+                et["TRT_et"] = et["TRT_et"].where(et["TRT_et"] < 5)
+
+                ft["dt_ft"] = pd.to_numeric(ft[COL_DT], errors="coerce")
+
+                # Merge ET+FT ανά χρήστη + token
+                merged = pd.merge(
+                    et[MERGE_KEYS + ["TRT_et"]],
+                    ft[MERGE_KEYS + ["dt_ft"]],
+                    on=MERGE_KEYS,
+                    how="inner",
+                )
+                merged["Lag"] = merged["dt_ft"] - merged["TRT_et"]
+
+                # Αφαίρεση ακραίων τιμών lag (> 5s σε απόλυτη τιμή)
+                merged = merged[merged["Lag"].abs() < 5]
+
+                # Επιστρέφουμε μόνο τις ET γραμμές εμπλουτισμένες με Lag
+                et_with_lag = pd.merge(
+                    et,
+                    merged[MERGE_KEYS + ["Lag"]],
+                    on=MERGE_KEYS,
+                    how="left",
+                )
+                print(
+                    f"  Temporal Lag υπολογίστηκε για {merged['Lag'].notna().sum()} tokens "
+                    f"(median={merged['Lag'].median():.3f}s)"
+                )
+                return et_with_lag
+
+    # Case C: Fallback — χρησιμοποιούμε dt ως proxy για Lag
     if COL_DT in df.columns:
         df[COL_DT] = pd.to_numeric(df[COL_DT], errors="coerce")
         df["Lag"] = df[COL_DT]
         return df
 
-    # Case C: Δεν υπάρχουν καθόλου σχετικές στήλες -> δεν υπολογίζουμε Lag,
-    # απλώς συνεχίζουμε χωρίς Lag για να μην "σπάει" ο κώδικας.
-    # Αν αργότερα προσθέσεις τέτοιες στήλες, αυτή η συνάρτηση θα τις αξιοποιήσει.
     return df
 
 
@@ -137,17 +189,36 @@ def normalize_len_freq(df: pd.DataFrame) -> pd.DataFrame:
 
 def create_target_label(df: pd.DataFrame, trt_threshold: float | None = None) -> pd.DataFrame:
     """
-    Δημιουργεί binary target:
-    - target = 1 (Δύσκολη λέξη) αν TRT > threshold και isReg = 1
-    - target = 0 αλλιώς
+    Δημιουργεί binary target για δυσκολία ανάγνωσης.
 
-    Αν δεν δοθεί threshold, χρησιμοποιεί το μέσο όρο της TRT.
+    Προτεραιότητα:
+    1. Αν υπάρχει στήλη 'Lag' (Temporal Lag = dt_FT - TRT_ET):
+       target = 1 αν Lag > median(Lag), αλλιώς 0
+       (θετικό lag = εύκολη λέξη, αρνητικό = δύσκολη)
+
+    2. Αν υπάρχουν TRT / isReg (παλιός ορισμός):
+       target = 1 αν TRT > threshold ΚΑΙ isReg = 1
+
+    3. Fallback: median split από διαθέσιμη αριθμητική στήλη
     """
-    # Περίπτωση 1: Έχουμε TRT / isReg -> χρησιμοποιούμε τον αρχικό ορισμό
+    # Περίπτωση 1 (κύρια): Temporal Lag από merge ET+FT
+    if "Lag" in df.columns:
+        lag_series = pd.to_numeric(df["Lag"], errors="coerce")
+        valid_lag = lag_series.dropna()
+        if not valid_lag.empty:
+            median_lag = valid_lag.median()
+            # target=1 αν lag > median (εύκολη), target=0 αν lag <= median (δύσκολη)
+            df["target"] = np.where(lag_series > median_lag, 1, 0)
+            print(
+                f"  Target από Temporal Lag (median={median_lag:.3f}s): "
+                f"{(df['target']==1).sum()} εύκολες / {(df['target']==0).sum()} δύσκολες"
+            )
+            return df
+
+    # Περίπτωση 2: TRT / isReg
     if COL_TRT in df.columns and COL_IS_REG in df.columns:
         if trt_threshold is None:
             trt_threshold = df[COL_TRT].mean()
-
         df["target"] = np.where(
             (df[COL_TRT] > trt_threshold) & (df[COL_IS_REG] == 1),
             1,
@@ -155,28 +226,20 @@ def create_target_label(df: pd.DataFrame, trt_threshold: float | None = None) ->
         )
         return df
 
-    # Περίπτωση 2: Δεν υπάρχουν TRT / isReg.
-    # Τότε δημιουργούμε ένα binary target από κάποια υπάρχουσα στήλη,
-    # π.χ. από το "WAIS Digit Span Total" αν είναι διαθέσιμη:
+    # Περίπτωση 3: Fallback median split
     alt_col = None
-    for candidate in [
-        "WAIS Digit Span Total",
-        "WAIS Vocabulary",
-        "freq",
-        "len",
-    ]:
+    for candidate in ["WAIS Digit Span Total", "WAIS Vocabulary", "freq", "len"]:
         if candidate in df.columns:
             alt_col = candidate
             break
 
     if alt_col is None:
         raise KeyError(
-            "Δεν βρέθηκαν οι στήλες TRT/isReg ούτε κάποια εναλλακτική "
-            "στήλη (π.χ. 'WAIS Digit Span Total', 'WAIS Vocabulary', 'freq', 'len') "
-            "για δημιουργία binary target."
+            "Δεν βρέθηκαν κατάλληλες στήλες για δημιουργία target. "
+            "Χρειάζομαι 'Lag', 'TRT'+'isReg', ή κάποια από: "
+            "'WAIS Digit Span Total', 'WAIS Vocabulary', 'freq', 'len'."
         )
 
-    # Χρησιμοποιούμε το μέσο όρο της alt_col ως όριο: πάνω από το mean -> target=1, αλλιώς 0
     threshold = df[alt_col].mean()
     df["target"] = np.where(df[alt_col] > threshold, 1, 0)
     return df
